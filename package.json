@@ -1,0 +1,46 @@
+{
+  "name": "main-api",
+  "version": "0.0.1",
+  "description": "Main API",
+  "main": "index.js",
+  "scripts": {
+    "watch": "tsc --watch --preserveWatchOutput --pretty",
+    "dev": "NODE_ENV=development nodemon",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "build": "rimraf dist && tsc",
+    "start": "node dist/index.js",
+    "docker:dev": "docker-compose up",
+    "docker:connect": "docker-compose exec app /bin/bash",
+    "db:connect": "docker-compose exec postgres psql -d betting_scraper_db -U superuser",
+    "db:reset": "docker-compose exec app npx prisma migrate reset"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SishaarGamblr/Main-API.git"
+  },
+  "author": "SishaarRao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SishaarGamblr/Main-API/issues"
+  },
+  "homepage": "https://github.com/SishaarGamblr/Main-API#readme",
+  "dependencies": {
+    "@prisma/client": "^4.2.1",
+    "@types/config": "^3.3.0",
+    "config": "^3.3.7",
+    "fastify": "^4.5.0",
+    "moment": "^2.29.4",
+    "pg": "^8.7.3",
+    "prisma": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "fastify-tsconfig": "latest",
+    "nodemon": "latest",
+    "prettier": "latest",
+    "rimraf": "latest",
+    "tsconfig-paths": "latest",
+    "typescript": "latest",
+    "ts-node": "latest"
+  }
+}

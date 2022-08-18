@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      target: development # Can change this to `production` as well
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/dist
+    networks:
+      - default
+    depends_on:
+      - postgres
+    # command: tail -f /dev/null
+  
+  postgres:
+    container_name: postgres
+    image: 'postgres:14.4'
+    user: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_DB=database
+      - POSTGRES_USER=superuser
+      - POSTGRES_PASSWORD=password
+    networks:
+      - default
+
