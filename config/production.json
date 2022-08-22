@@ -1,0 +1,6 @@
+{
+  "database": {
+    "url": "ENVIRONMENT_VARIABLE",
+    "ssl": true
+  }
+}

@@ -84,7 +84,7 @@ model Wallet {
 
   user             User          @relation(fields: [userId], references: [id])
   userId           Int           @unique
-  balance          BigInt
+  balance          BigInt        @default(0)
   transactionsTo   Transaction[] @relation("to")
   transactionsFrom Transaction[] @relation("from")
 }

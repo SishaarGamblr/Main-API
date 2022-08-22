@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 
+import users from './controller/user';
+
 export default async function router(fastify: FastifyInstance) {
-  // fastify.register(mlbLinesController, { prefix: '/mlb'});
-  // fastify.register(nflLinesController, { prefix: '/nfl'});
+  fastify.register(users, { prefix: '/users'})
 }

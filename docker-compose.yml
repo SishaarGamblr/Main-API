@@ -10,7 +10,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - .:/dist
+      - .:/app
+    working_dir: /app
     networks:
       - default
     depends_on:
