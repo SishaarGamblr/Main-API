@@ -1,12 +1,13 @@
-FROM node:16 as build
+FROM node:18 as build
 
 RUN mkdir -p /app
-WORKDIR /app
 
 FROM build AS development
+WORKDIR /app
 ENV NODE_ENV development
 COPY . .
 RUN npm run build
+RUN npm install
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
