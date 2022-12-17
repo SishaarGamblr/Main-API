@@ -11,11 +11,18 @@
     "docker:dev": "docker-compose up",
     "docker:connect": "docker-compose exec app /bin/bash",
     "db:connect": "docker-compose exec postgres psql -d betting_scraper_db -U superuser",
-    "db:reset": "docker-compose exec app npx prisma migrate reset"
+    "db:migrate": "npm run typeorm -- migration:run",
+    "db:migrate:generate": "npm run typeorm -- migration:generate -p ./src/utils/database/migrations/$npm_config_name",
+    "db:migrate:show": "npm run typeorm -- migration:show",
+    "db:reset": "docker-compose exec app npx prisma migrate reset",
+    "typeorm": "typeorm-ts-node-commonjs -d src/utils/database/connection.ts"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SishaarGamblr/Main-API.git"
+  },
+  "prettier": {
+    "singleQuote": true
   },
   "author": "SishaarRao",
   "license": "ISC",
@@ -24,20 +31,22 @@
   },
   "homepage": "https://github.com/SishaarGamblr/Main-API#readme",
   "dependencies": {
-    "@prisma/client": "^4.7.1",
     "@types/config": "^3.3.0",
+    "class-transformer": "^0.5.1",
     "config": "^3.3.8",
     "fastify": "^4.10.2",
     "moment": "^2.29.4",
     "pg": "^8.8.0",
-    "prisma": "^4.7.1",
-    "tslib": "^2.4.1"
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.4.1",
+    "typeorm": "^0.3.11"
   },
   "devDependencies": {
+    "@tsconfig/node18": "^1.0.1",
     "@types/node": "latest",
     "fastify-tsconfig": "latest",
     "nodemon": "latest",
-    "prettier": "latest",
+    "prettier": "^2.8.1",
     "rimraf": "latest",
     "ts-node": "latest",
     "tsconfig-paths": "latest",
