@@ -13,6 +13,7 @@
     "db:connect": "docker-compose exec postgres psql -d betting_scraper_db -U superuser",
     "db:migrate": "npm run typeorm -- migration:run",
     "db:migrate:generate": "npm run typeorm -- migration:generate -p ./src/utils/database/migrations/$npm_config_name",
+    "db:migrate:rollback": "npm run typeorm -- migration:revert",
     "db:migrate:show": "npm run typeorm -- migration:show",
     "db:reset": "docker-compose exec app npx prisma migrate reset",
     "typeorm": "typeorm-ts-node-commonjs -d src/utils/database/connection.ts"
@@ -31,14 +32,15 @@
   },
   "homepage": "https://github.com/SishaarGamblr/Main-API#readme",
   "dependencies": {
+    "@fastify/error": "^3.2.0",
     "@types/config": "^3.3.0",
-    "class-transformer": "^0.5.1",
     "config": "^3.3.8",
     "fastify": "^4.10.2",
     "moment": "^2.29.4",
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.4.1",
+    "typedi": "^0.10.0",
     "typeorm": "^0.3.11"
   },
   "devDependencies": {
