@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   BeforeInsert,
   Column,
@@ -13,7 +12,6 @@ import crypto from 'crypto';
 const ID_LENGTH = 20;
 
 export abstract class BaseEntity extends TypeormBaseEntity {
-  @Exclude()
   protected abstract prefix: string;
 
   @PrimaryColumn()
@@ -40,3 +38,9 @@ export abstract class BaseEntity extends TypeormBaseEntity {
   })
   deleted!: boolean;
 }
+
+export const BasePropertiesSchema = {
+  id: { type: 'string' },
+  dateCreated: { type: 'string' },
+  dateModified: { type: 'string' },
+};

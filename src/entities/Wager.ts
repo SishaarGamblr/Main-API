@@ -1,11 +1,11 @@
-import { Column, Entity, ManyToOne } from "typeorm";
-import { BaseEntity } from "./BaseEntity";
-import { League } from "./League";
-import { User } from "./User";
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
+import { League } from './League';
+import { User } from './User';
 
 @Entity()
 export class Wager extends BaseEntity {
-  protected prefix = 'wagr_';
+  prefix = 'wagr_';
 
   @Column({ default: 0, nullable: false })
   amount!: number;
@@ -13,7 +13,7 @@ export class Wager extends BaseEntity {
   @Column({ nullable: false })
   line!: string;
 
-  @Column({ nullable: false, type: 'jsonb', default: {}})
+  @Column({ nullable: false, type: 'jsonb', default: {} })
   gameJson: {};
 
   @ManyToOne(() => League, (league) => league.wagers)

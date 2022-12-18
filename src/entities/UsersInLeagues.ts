@@ -1,14 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, Unique } from "typeorm";
-import { BaseEntity } from "./BaseEntity";
-import { User } from "./User";
-import { League } from "./League";
-
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  Unique,
+} from 'typeorm';
+import { BaseEntity } from './BaseEntity';
+import { User } from './User';
+import { League } from './League';
 
 @Entity()
 @Unique(['userId', 'leagueId'])
 export class UsersToLeagues extends BaseEntity {
-  protected prefix = 'usr_lea';
-  
+  prefix = 'usr_lea';
+
   @Column()
   userId!: string;
 
@@ -25,8 +31,8 @@ export class UsersToLeagues extends BaseEntity {
   invitedBy: User;
 
   @ManyToOne(() => User, (user) => user.userToLeagues)
-  user!: User
+  user!: User;
 
   @ManyToOne(() => League, (league) => league.leaguesToUsers)
-  league!: League
+  league!: League;
 }
