@@ -1,8 +1,6 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  Unique,
   OneToMany,
   OneToOne,
   JoinColumn,
@@ -10,7 +8,6 @@ import {
 import { BaseEntity, BasePropertiesSchema } from './BaseEntity';
 import { UsersToLeagues } from './UsersInLeagues';
 import { Wallet } from './Wallet';
-import { FastifySchema } from 'fastify';
 import { ErrorPropertiesSchema } from '../lib/errors/schema';
 
 @Entity()

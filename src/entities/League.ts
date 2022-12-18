@@ -1,10 +1,8 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
 } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';

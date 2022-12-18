@@ -17,5 +17,7 @@
     "sourceMap": true,
     "sourceRoot": "/",
     "strictPropertyInitialization": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   }
 }

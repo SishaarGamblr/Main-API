@@ -1,6 +1,5 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
-import { User } from './User';
 import { Wallet } from './Wallet';
 
 @Entity()

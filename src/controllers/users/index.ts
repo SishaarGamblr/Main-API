@@ -1,13 +1,12 @@
-import fastify, {
+import {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
 } from 'fastify';
-import Container, { Inject, Service } from 'typedi';
+import Container from 'typedi';
 import { UserService } from '../../services/users';
 import { CreateUserDTO, UserResponseSchema } from '../../entities/User';
 import { NotFoundError } from '../../lib/errors/errors';
-import { request } from 'http';
 import { ErrorPropertiesSchema } from '../../lib/errors/schema';
 
 const usersService = Container.get(UserService);
