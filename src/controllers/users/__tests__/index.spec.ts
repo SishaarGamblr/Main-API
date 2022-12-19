@@ -124,6 +124,25 @@ describe('Users Controller', () => {
       });
     });
 
+    describe('not providing a complete payload', () => {
+      it('returns an error', async () => {
+        const response = await server.inject({
+          method: 'POST',
+          url: `/users`,
+          payload: {},
+        });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.json()).toMatchInlineSnapshot(`
+          {
+            "error": "Bad Request",
+            "message": "body must have required property 'email'",
+            "statusCode": 400,
+          }
+        `);
+      });
+    });
+
     describe('an unexpected error occurs', () => {
       beforeAll(async () => {
         const mockUserService = {

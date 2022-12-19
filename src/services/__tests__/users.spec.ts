@@ -6,6 +6,12 @@ import { AlreadyExistsError } from '../../lib/errors/errors';
 describe('Users Service', () => {
   const usersService = Container.get(UserService);
 
+  afterAll(async () => {
+    const users = await User.find();
+
+    await User.remove(users);
+  })
+
   describe('findOne', () => {
     describe('finding an existing user', () => {
       let user: User;
