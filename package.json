@@ -18,7 +18,9 @@
     "db:migrate:rollback": "npm run typeorm -- migration:revert",
     "db:migrate:show": "npm run typeorm -- migration:show",
     "db:reset": "docker-compose exec app npx prisma migrate reset",
-    "typeorm": "typeorm-ts-node-commonjs -d src/utils/database/connection.ts"
+    "typeorm": "typeorm-ts-node-commonjs -d src/utils/database/connection.ts",
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watchAll"
   },
   "repository": {
     "type": "git",
@@ -35,7 +37,6 @@
   "homepage": "https://github.com/SishaarGamblr/Main-API#readme",
   "dependencies": {
     "@fastify/error": "^3.2.0",
-    "@types/config": "^3.3.0",
     "config": "^3.3.8",
     "fastify": "^4.10.2",
     "moment": "^2.29.4",
@@ -47,11 +48,15 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1",
+    "@types/config": "^3.3.0",
+    "@types/jest": "^29.2.4",
     "@types/node": "latest",
     "fastify-tsconfig": "latest",
+    "jest": "^29.3.1",
     "nodemon": "latest",
     "prettier": "^2.8.1",
     "rimraf": "latest",
+    "ts-jest": "^29.0.3",
     "ts-node": "latest",
     "tsconfig-paths": "latest",
     "typescript": "latest"
