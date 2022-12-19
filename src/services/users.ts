@@ -1,5 +1,5 @@
 import { FindOneOptions, QueryFailedError } from 'typeorm';
-import { CreateUserDTO, FindOneDTO, User } from '../entities/User';
+import { User } from '../entities/User';
 import { Service } from 'typedi';
 import { AlreadyExistsError } from '../lib/errors/errors';
 
@@ -41,4 +41,14 @@ export class UserService {
       await user.save();
     }
   }
+}
+
+interface FindOneDTO {
+  deleted?: boolean;
+}
+
+interface CreateUserDTO {
+  email: string;
+  phone: string;
+  name: string;
 }
