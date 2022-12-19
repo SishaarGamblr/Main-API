@@ -16,7 +16,7 @@ export class UserService {
     return await User.findOne(options);
   }
 
-  async create(options: CreateUserDTO) {
+  async create(options: CreateUserDTO): Promise<User | never> {
     try {
       const user = await User.create({
         email: options.email,
@@ -25,7 +25,7 @@ export class UserService {
         wallet: {},
       }).save();
 
-      return await this.findOne(user.id);
+      return await User.findOneOrFail({where: { id: user.id }});
     } catch (err) {
       if (err instanceof QueryFailedError && err.driverError.code === '23505') {
         throw new AlreadyExistsError('User');
