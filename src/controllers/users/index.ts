@@ -5,9 +5,8 @@ import {
 } from 'fastify';
 import Container from 'typedi';
 import { UserService } from '../../services/users';
-import { CreateUserDTO, UserResponseSchema } from '../../entities/User';
 import { NotFoundError } from '../../lib/errors/errors';
-import { ErrorPropertiesSchema } from '../../lib/errors/schema';
+import * as Schemas from './schemas';
 
 const usersService = Container.get(UserService);
 
@@ -15,18 +14,10 @@ export default async (fastify: FastifyInstance) => {
   fastify.get(
     '/:id',
     {
-      schema: {
-        params: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-          },
-        },
-        response: UserResponseSchema,
-      },
+      schema: Schemas.FindById
     },
     async function findById(
-      request: FastifyRequest<{ Params: { id: string } }>,
+      request: FastifyRequest<{ Params: Schemas.IFindByIdParams }>,
       reply: FastifyReply
     ) {
       const user = await usersService.findOne(request.params.id);
@@ -42,12 +33,10 @@ export default async (fastify: FastifyInstance) => {
   fastify.post(
     '/',
     {
-      schema: {
-        response: UserResponseSchema,
-      },
+      schema: Schemas.Create
     },
     async function create(
-      request: FastifyRequest<{ Body: CreateUserDTO }>,
+      request: FastifyRequest<{ Body: Schemas.ICreateBody }>,
       reply: FastifyReply
     ) {
       const user = await usersService.create({
@@ -63,15 +52,10 @@ export default async (fastify: FastifyInstance) => {
   fastify.delete(
     '/:id',
     {
-      schema: {
-        response: {
-          '2xx': { type: 'string' },
-          '4xx': ErrorPropertiesSchema,
-        },
-      },
+      schema: Schemas.Delete
     },
     async function create(
-      request: FastifyRequest<{ Params: { id: string } }>,
+      request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
       reply: FastifyReply
     ) {
       await usersService.delete(request.params.id);
