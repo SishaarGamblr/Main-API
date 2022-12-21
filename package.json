@@ -20,6 +20,7 @@
     "db:reset": "docker-compose exec app npx prisma migrate reset",
     "typeorm": "typeorm-ts-node-commonjs -d src/utils/database/connection.ts",
     "test": "jest --runInBand",
+    "test:docker": "docker-compose down && docker-compose -f docker-compose.yml -f docker-compose.ci.yml up --abort-on-container-exit --exit-code-from app --build",
     "test:watch": "jest --runInBand --watchAll"
   },
   "repository": {
