@@ -31,6 +31,12 @@ services:
       - POSTGRES_DB=database
       - POSTGRES_USER=superuser
       - POSTGRES_PASSWORD=password
+    volumes:
+      - db:/var/lib/postgresql/data
     networks:
       - default
+
+volumes:
+  db:
+    driver: local
 

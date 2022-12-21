@@ -8,8 +8,6 @@ import { UserService } from '../../services/users';
 import { NotFoundError } from '../../lib/errors/errors';
 import * as Schemas from './schemas';
 
-const usersService = Container.get(UserService);
-
 export default async (fastify: FastifyInstance) => {
   fastify.get(
     '/:id',
@@ -20,6 +18,7 @@ export default async (fastify: FastifyInstance) => {
       request: FastifyRequest<{ Params: Schemas.IFindByIdParams }>,
       reply: FastifyReply
     ) {
+      const usersService = Container.get(UserService);
       const user = await usersService.findOne(request.params.id);
 
       if (!user) {
@@ -39,6 +38,7 @@ export default async (fastify: FastifyInstance) => {
       request: FastifyRequest<{ Body: Schemas.ICreateBody }>,
       reply: FastifyReply
     ) {
+      const usersService = Container.get(UserService);
       const user = await usersService.create({
         email: request.body.email,
         phone: request.body.phone,
@@ -58,6 +58,7 @@ export default async (fastify: FastifyInstance) => {
       request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
       reply: FastifyReply
     ) {
+      const usersService = Container.get(UserService);
       await usersService.delete(request.params.id);
 
       reply.code(200).send('ok');
