@@ -2,6 +2,7 @@ import Container from 'typedi';
 import { User } from '../../entities/User';
 import { UserService } from '../users';
 import { AlreadyExistsError } from '../../lib/errors/errors';
+import { Wallet } from '../../entities/Wallet';
 
 describe('Users Service', () => {
   const usersService = Container.get(UserService);
@@ -102,6 +103,14 @@ describe('Users Service', () => {
         expect(user.name).toBe('dummy');
         expect(user.phone).toBe('dummy');
       });
+
+      it('creates a wallet associated with the user', async () => {
+        const wallet = await Wallet.findOne({
+          where: { owner: { id: user.id }}
+        });
+
+        expect(wallet).toBeDefined();
+      })
     });
 
     describe('creating an already existing user', () => {
