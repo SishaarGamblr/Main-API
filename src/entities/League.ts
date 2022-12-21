@@ -16,7 +16,7 @@ export class League extends BaseEntity {
   @Column({ nullable: false })
   name!: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.id)
   owner: User;
 
   @OneToMany(() => UsersToLeagues, (userToLeague) => userToLeague.leagueId)

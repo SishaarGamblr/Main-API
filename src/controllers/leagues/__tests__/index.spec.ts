@@ -1,20 +1,20 @@
 import Container from 'typedi';
 import server from '../../../app';
-import { UserService } from '../../../services/users';
 import { AlreadyExistsError } from '../../../lib/errors/errors';
+import { LeaguesService } from '../../../services/leagues';
 
-describe('Users Controller', () => {
+describe('Leagues Controller', () => {
   afterEach(() => {
     Container.reset();
   });
 
-  describe('GET /users/:id', () => {
-    describe('fetching a user which does not exist', () => {
+  describe('GET /leagues/:id', () => {
+    describe('fetching a league which does not exist', () => {
       it('throws an error', async () => {
         const dummyId = 'dummy';
         const response = await server.inject({
           method: 'GET',
-          url: `/users/${dummyId}`,
+          url: `/leagues/${dummyId}`,
         });
 
         expect(response.statusCode).toBe(404);
@@ -29,21 +29,21 @@ describe('Users Controller', () => {
       });
     });
 
-    describe('fetching a user', () => {
+    describe('fetching a league', () => {
       const id = 'dummy';
 
       beforeAll(async () => {
-        const mockUserService = {
+        const mockLeagueService = {
           findOne: () => Promise.resolve({ id }),
         };
 
-        Container.set(UserService, mockUserService);
+        Container.set(LeaguesService, mockLeagueService);
       });
 
-      it('fetches the user', async () => {
+      it('fetches the league', async () => {
         const response = await server.inject({
           method: 'GET',
-          url: `/users/${id}`,
+          url: `/leagues/${id}`,
         });
 
         expect(response.statusCode).toBe(200);
@@ -52,30 +52,28 @@ describe('Users Controller', () => {
     });
   });
 
-  describe('POST /users', () => {
-    describe('successfully creating a user', () => {
-      const mockUser = {
+  describe('POST /leagues', () => {
+    describe('successfully creating a league', () => {
+      const mockLeague = {
         id: 'dummy',
-        email: 'dummy',
-        phone: 'dummy',
+        ownerId: 'dummy',
         name: 'dummy',
       };
 
       beforeAll(async () => {
-        const mockUserService = {
-          create: () => Promise.resolve(mockUser),
+        const mockLeagueService = {
+          create: () => Promise.resolve(mockLeague),
         };
 
-        Container.set(UserService, mockUserService);
+        Container.set(LeaguesService, mockLeagueService);
       });
 
-      it('creates the user', async () => {
+      it('creates the league', async () => {
         const response = await server.inject({
           method: 'POST',
-          url: `/users`,
+          url: `/leagues`,
           payload: {
-            email: 'dummy',
-            phone: 'dummy',
+            ownerId: 'dummy',
             name: 'dummy',
           },
         });
@@ -83,31 +81,29 @@ describe('Users Controller', () => {
         expect(response.statusCode).toBe(200);
         expect(response.json()).toMatchInlineSnapshot(`
           {
-            "email": "dummy",
             "id": "dummy",
             "name": "dummy",
-            "phone": "dummy",
+            "ownerId": "dummy",
           }
         `);
       });
     });
 
-    describe('failing to create a user', () => {
+    describe('failing to create a league', () => {
       beforeAll(async () => {
-        const mockUserService = {
+        const mockLeagueService = {
           create: () => Promise.reject(new AlreadyExistsError('User')),
         };
 
-        Container.set(UserService, mockUserService);
+        Container.set(LeaguesService, mockLeagueService);
       });
 
       it('returns an error', async () => {
         const response = await server.inject({
           method: 'POST',
-          url: `/users`,
+          url: `/leagues`,
           payload: {
-            email: 'dummy',
-            phone: 'dummy',
+            ownerId: 'dummy',
             name: 'dummy',
           },
         });
@@ -128,7 +124,7 @@ describe('Users Controller', () => {
       it('returns an error', async () => {
         const response = await server.inject({
           method: 'POST',
-          url: `/users`,
+          url: `/leagues`,
           payload: {},
         });
 
@@ -136,7 +132,7 @@ describe('Users Controller', () => {
         expect(response.json()).toMatchInlineSnapshot(`
           {
             "error": "Bad Request",
-            "message": "body must have required property 'email'",
+            "message": "body must have required property 'ownerId'",
             "statusCode": 400,
           }
         `);
@@ -145,20 +141,19 @@ describe('Users Controller', () => {
 
     describe('an unexpected error occurs', () => {
       beforeAll(async () => {
-        const mockUserService = {
+        const mockLeagueService = {
           create: () => Promise.reject(new Error('Unexpected Error')),
         };
 
-        Container.set(UserService, mockUserService);
+        Container.set(LeaguesService, mockLeagueService);
       });
 
       it('returns a 500 error', async () => {
         const response = await server.inject({
           method: 'POST',
-          url: `/users`,
+          url: `/leagues`,
           payload: {
-            email: 'dummy',
-            phone: 'dummy',
+            ownerId: 'dummy',
             name: 'dummy',
           },
         });
@@ -175,12 +170,12 @@ describe('Users Controller', () => {
     });
   });
 
-  describe('DELETE /users/:id', () => {
-    describe('deleting a user which does not exist', () => {
+  describe('DELETE /leagues/:id', () => {
+    describe('deleting a league which does not exist', () => {
       it('returns without throwing an error', async () => {
         const response = await server.inject({
           method: 'DELETE',
-          url: '/users/dummyId',
+          url: '/leagues/dummyId',
         });
 
         expect(response.statusCode).toBe(200);
@@ -188,19 +183,19 @@ describe('Users Controller', () => {
       });
     });
 
-    describe('deleting a user which exists', () => {
+    describe('deleting a league which exists', () => {
       beforeAll(async () => {
-        const mockUserService = {
+        const mockLeagueService = {
           delete: () => Promise.resolve(),
         };
 
-        Container.set(UserService, mockUserService);
+        Container.set(LeaguesService, mockLeagueService);
       });
 
-      it('deletes the user', async () => {
+      it('deletes the league', async () => {
         const response = await server.inject({
           method: 'DELETE',
-          url: '/users/dummyId',
+          url: '/leagues/dummyId',
         });
 
         expect(response.statusCode).toBe(200);
@@ -210,17 +205,17 @@ describe('Users Controller', () => {
 
     describe('an unexpected error occurs', () => {
       beforeAll(async () => {
-        const mockUserService = {
+        const mockLeagueService = {
           delete: () => Promise.reject(new Error('Unexpected error')),
         };
 
-        Container.set(UserService, mockUserService);
+        Container.set(LeaguesService, mockLeagueService);
       });
 
       it('throws an error', async () => {
         const response = await server.inject({
           method: 'DELETE',
-          url: '/users/dummyId',
+          url: '/leagues/dummyId',
         });
 
         expect(response.statusCode).toBe(500);
