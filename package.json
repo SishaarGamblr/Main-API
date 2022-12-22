@@ -38,6 +38,7 @@
   "homepage": "https://github.com/SishaarGamblr/Main-API#readme",
   "dependencies": {
     "@fastify/error": "^3.2.0",
+    "bcrypt": "^5.1.0",
     "config": "^3.3.8",
     "fastify": "^4.10.2",
     "moment": "^2.29.4",
@@ -49,6 +50,7 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1",
+    "@types/bcrypt": "^5.0.0",
     "@types/config": "^3.3.0",
     "@types/jest": "^29.2.4",
     "@types/node": "latest",
