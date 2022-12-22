@@ -1,7 +1,7 @@
-import { Service } from "typedi";
-import { Wallet } from "../entities/Wallet";
-import { FindOneOptions } from "typeorm";
-import { NotFoundError } from "../lib/errors/errors";
+import { Service } from 'typedi';
+import { Wallet } from '../entities/Wallet';
+import { FindOneOptions } from 'typeorm';
+import { NotFoundError } from '../lib/errors/errors';
 
 @Service()
 export class WalletsService {
@@ -18,7 +18,7 @@ export class WalletsService {
     if (!wallet) {
       throw new NotFoundError('Wallet');
     }
-    
+
     return wallet;
   }
 }

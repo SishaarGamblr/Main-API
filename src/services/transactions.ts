@@ -1,6 +1,6 @@
-import { Service } from "typedi";
-import { Transaction } from "../entities/Transaction";
-import { EntityManager, FindOneOptions } from "typeorm";
+import { Service } from 'typedi';
+import { Transaction } from '../entities/Transaction';
+import { EntityManager, FindOneOptions } from 'typeorm';
 
 @Service()
 export class TransactionsService {
@@ -20,13 +20,12 @@ export class TransactionsService {
       const transaction = Transaction.create({
         amount: options.amount,
         from: { id: options.fromId },
-        to: { id: options.toId }
+        to: { id: options.toId },
       });
 
       return await tx.save(transaction);
     },
-
-  }
+  };
 }
 
 interface FindOneDTO {

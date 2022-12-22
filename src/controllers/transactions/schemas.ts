@@ -1,4 +1,4 @@
-import { BasePropertiesSchema } from "../../entities/BaseEntity"
+import { BasePropertiesSchema } from '../../entities/BaseEntity';
 import { Schemas as ErrorSchemas } from '../../lib/errors/schemas';
 
 export const TransactionResponse = {
@@ -12,12 +12,12 @@ export const TransactionResponse = {
     },
   },
   '4xx': {
-    ...ErrorSchemas.Error
+    ...ErrorSchemas.Error,
   },
   '5xx': {
-    ...ErrorSchemas.Error
-  }
-}
+    ...ErrorSchemas.Error,
+  },
+};
 
 export const FindById = {
   params: {
@@ -25,10 +25,10 @@ export const FindById = {
     properties: {
       id: { type: 'string' },
     },
-    required: ['id']
+    required: ['id'],
   },
-  response: TransactionResponse
-}
+  response: TransactionResponse,
+};
 
 export interface IFindByIdParams {
   id: string;
@@ -40,12 +40,12 @@ export const Create = {
     properties: {
       fromId: { type: 'string' },
       toId: { type: 'string' },
-      amount: { type: 'number' }
+      amount: { type: 'number' },
     },
-    required: ['fromId', 'toId', 'amount']
+    required: ['fromId', 'toId', 'amount'],
   },
-  response: TransactionResponse
-}
+  response: TransactionResponse,
+};
 
 export interface ICreateBody {
   fromId: string;

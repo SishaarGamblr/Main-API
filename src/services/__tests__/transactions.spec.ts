@@ -1,14 +1,13 @@
-import Container from "typedi";
-import { TransactionsService } from "../transactions";
-import { Transaction } from "../../entities/Transaction";
-import { Wallet } from "../../entities/Wallet";
-import connection from "../../utils/database/connection";
+import Container from 'typedi';
+import { TransactionsService } from '../transactions';
+import { Transaction } from '../../entities/Transaction';
+import { Wallet } from '../../entities/Wallet';
+import connection from '../../utils/database/connection';
 
 describe('Transactions Service', () => {
   const transactionsService = Container.get(TransactionsService);
 
   describe('findOne', () => {
-
     describe('finding an existing transaction', () => {
       let transaction: Transaction;
 
@@ -17,14 +16,14 @@ describe('Transactions Service', () => {
         transaction = await Transaction.create({
           amount: 1,
           from: { id: wallet.id },
-          to: { id: wallet.id }
+          to: { id: wallet.id },
         }).save();
       });
 
       afterAll(async () => {
         const [wallets, transactions] = await Promise.all([
           Wallet.find(),
-          Transaction.find()
+          Transaction.find(),
         ]);
 
         await Transaction.remove(transactions);
@@ -48,14 +47,14 @@ describe('Transactions Service', () => {
           amount: 1,
           from: { id: wallet.id },
           to: { id: wallet.id },
-          deleted: true
+          deleted: true,
         }).save();
       });
 
       afterAll(async () => {
         const [wallets, transactions] = await Promise.all([
           Wallet.find(),
-          Transaction.find()
+          Transaction.find(),
         ]);
 
         await Transaction.remove(transactions);
@@ -64,7 +63,7 @@ describe('Transactions Service', () => {
 
       it('returns the transaction with the `deleted` parameter', async () => {
         const response = await transactionsService.findOne(transaction.id, {
-          deleted: true
+          deleted: true,
         });
 
         expect(response).toBeDefined();
@@ -74,7 +73,7 @@ describe('Transactions Service', () => {
       it('does not return the transaction without the `deleted` parameter', async () => {
         const response = await transactionsService.findOne(transaction.id);
         expect(response).toBeNull();
-      })
+      });
     });
 
     describe('finding a non-existant transaction', () => {
@@ -83,27 +82,24 @@ describe('Transactions Service', () => {
         expect(response).toBeNull();
       });
     });
-
   });
 
   describe('TRANSACTION', () => {
-
     describe('create', () => {
-
       describe('creating a transaction', () => {
         let wallet: Wallet;
         let transaction: Transaction;
 
         beforeAll(async () => {
           wallet = await Wallet.create().save();
-        })
-        
+        });
+
         afterAll(async () => {
           const [wallets, transactions] = await Promise.all([
             Wallet.find(),
-            Transaction.find()
+            Transaction.find(),
           ]);
-  
+
           await Transaction.remove(transactions);
           await Wallet.remove(wallets);
         });
@@ -115,7 +111,7 @@ describe('Transactions Service', () => {
               transaction = await transactionsService.TRANSACTION.create(tx, {
                 amount: 100,
                 fromId: wallet.id,
-                toId: wallet.id
+                toId: wallet.id,
               });
             } catch (err) {
               caughtErr = err;
@@ -130,10 +126,7 @@ describe('Transactions Service', () => {
           expect(transaction.fromId).toBe(wallet.id);
           expect(transaction.toId).toBe(wallet.id);
         });
-
       });
     });
-
   });
-
 });

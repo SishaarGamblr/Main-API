@@ -10,4 +10,4 @@ export const InsufficientBalanceError = createError(
   'INSUFFICENT_WALLET_BALANCE',
   'Wallet does not have sufficient balance for this operation',
   403
-)
+);

@@ -11,12 +11,12 @@ export const LeagueResponse = {
     },
   },
   '4xx': {
-    ...ErrorSchemas.Error
+    ...ErrorSchemas.Error,
   },
   '5xx': {
-    ...ErrorSchemas.Error
-  }
-}
+    ...ErrorSchemas.Error,
+  },
+};
 
 export const FindById = {
   params: {
@@ -24,10 +24,10 @@ export const FindById = {
     properties: {
       id: { type: 'string' },
     },
-    required: ['id']
+    required: ['id'],
   },
-  response: LeagueResponse
-}
+  response: LeagueResponse,
+};
 
 export interface IFindByIdParams {
   id: string;
@@ -42,8 +42,8 @@ export const Create = {
     },
     required: ['ownerId', 'name'],
   },
-  response: LeagueResponse
-}
+  response: LeagueResponse,
+};
 
 export interface ICreateBody {
   name: string;
@@ -56,13 +56,13 @@ export const Delete = {
     properties: {
       id: { type: 'string' },
     },
-    required: ['id']
+    required: ['id'],
   },
   response: {
     '2xx': { type: 'string' },
     '4xx': ErrorSchemas.Error,
-  }
-}
+  },
+};
 
 export interface IDeleteParams {
   id: string;

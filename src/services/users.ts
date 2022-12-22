@@ -25,7 +25,7 @@ export class UserService {
         wallet: {},
       }).save();
 
-      return await User.findOneOrFail({where: { id: user.id }});
+      return await User.findOneOrFail({ where: { id: user.id } });
     } catch (err) {
       if (err instanceof QueryFailedError && err.driverError.code === '23505') {
         throw new AlreadyExistsError('User');

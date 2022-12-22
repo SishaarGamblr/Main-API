@@ -1,18 +1,18 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import * as Schemas from './schemas';
-import Container from "typedi";
-import { LeaguesService } from "../../services/leagues";
-import { NotFoundError } from "../../lib/errors/errors";
+import Container from 'typedi';
+import { LeaguesService } from '../../services/leagues';
+import { NotFoundError } from '../../lib/errors/errors';
 
 export default async (fastify: FastifyInstance) => {
   fastify.get(
     '/:id',
     {
-      schema: Schemas.FindById
+      schema: Schemas.FindById,
     },
     async function findById(
       request: FastifyRequest<{ Params: Schemas.IFindByIdParams }>,
-      reply: FastifyReply,
+      reply: FastifyReply
     ) {
       const leaguesService = Container.get(LeaguesService);
       const league = await leaguesService.findOne(request.params.id);
@@ -28,7 +28,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.post(
     '/',
     {
-      schema: Schemas.Create
+      schema: Schemas.Create,
     },
     async function create(
       request: FastifyRequest<{ Body: Schemas.ICreateBody }>,
@@ -37,7 +37,7 @@ export default async (fastify: FastifyInstance) => {
       const leaguesService = Container.get(LeaguesService);
       const user = await leaguesService.create({
         name: request.body.name,
-        ownerId: request.body.ownerId
+        ownerId: request.body.ownerId,
       });
 
       reply.send(user);
@@ -47,7 +47,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.delete(
     '/:id',
     {
-      schema: Schemas.Delete
+      schema: Schemas.Delete,
     },
     async function create(
       request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
@@ -59,4 +59,4 @@ export default async (fastify: FastifyInstance) => {
       reply.code(200).send('ok');
     }
   );
-}
+};

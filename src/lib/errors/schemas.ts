@@ -6,6 +6,6 @@ export const Schemas = {
       code: { type: 'string' },
       error: { type: 'string' },
       message: { type: 'string' },
-    }
-  }
-}
+    },
+  },
+};
