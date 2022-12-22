@@ -1,49 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class createUsersLeaguesTransactionsWallet1671728504536 implements MigrationInterface {
-    name = 'createUsersLeaguesTransactionsWallet1671728504536'
+export class createUsersLeaguesTransactionsWallet1672665617217 implements MigrationInterface {
+    name = 'createUsersLeaguesTransactionsWallet1672665617217'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
-            CREATE TABLE "wager" (
-                "id" character varying NOT NULL,
-                "date_created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "date_modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "deleted" boolean NOT NULL DEFAULT false,
-                "amount" integer NOT NULL DEFAULT '0',
-                "line" character varying NOT NULL,
-                "gameJson" jsonb NOT NULL DEFAULT '{}',
-                "leagueId" character varying,
-                "bettorId" character varying,
-                "takerId" character varying,
-                CONSTRAINT "PK_156862dd0b704f2fd7dd5ecf5f0" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "league" (
-                "id" character varying NOT NULL,
-                "date_created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "date_modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "deleted" boolean NOT NULL DEFAULT false,
-                "name" character varying NOT NULL,
-                "ownerId" character varying,
-                CONSTRAINT "PK_0bd74b698f9e28875df738f7864" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "users_to_leagues" (
-                "id" character varying NOT NULL,
-                "date_created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "date_modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "deleted" boolean NOT NULL DEFAULT false,
-                "userId" character varying NOT NULL,
-                "leagueId" character varying NOT NULL,
-                "isOwner" boolean NOT NULL DEFAULT false,
-                "invitedById" character varying NOT NULL,
-                CONSTRAINT "UQ_b201460e8a92b9433f020cdfbde" UNIQUE ("userId", "leagueId"),
-                CONSTRAINT "PK_d58d302a3af307236250545310b" PRIMARY KEY ("id")
-            )
-        `);
         await queryRunner.query(`
             CREATE TABLE "transaction" (
                 "id" character varying NOT NULL,
@@ -83,6 +43,59 @@ export class createUsersLeaguesTransactionsWallet1671728504536 implements Migrat
             )
         `);
         await queryRunner.query(`
+            CREATE TABLE "wager" (
+                "id" character varying NOT NULL,
+                "date_created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "date_modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "deleted" boolean NOT NULL DEFAULT false,
+                "amount" integer NOT NULL DEFAULT '0',
+                "line" character varying NOT NULL,
+                "gameJson" jsonb NOT NULL DEFAULT '{}',
+                "leagueId" character varying,
+                "bettorId" character varying,
+                "takerId" character varying,
+                CONSTRAINT "PK_156862dd0b704f2fd7dd5ecf5f0" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "league" (
+                "id" character varying NOT NULL,
+                "date_created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "date_modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "deleted" boolean NOT NULL DEFAULT false,
+                "name" character varying NOT NULL,
+                "ownerId" character varying,
+                CONSTRAINT "PK_0bd74b698f9e28875df738f7864" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "users_to_leagues" (
+                "id" character varying NOT NULL,
+                "date_created" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "date_modified" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "deleted" boolean NOT NULL DEFAULT false,
+                "userId" character varying NOT NULL,
+                "leagueId" character varying NOT NULL,
+                "isOwner" boolean NOT NULL DEFAULT false,
+                "accepted" boolean NOT NULL DEFAULT false,
+                "invitedById" character varying,
+                CONSTRAINT "UQ_b201460e8a92b9433f020cdfbde" UNIQUE ("userId", "leagueId"),
+                CONSTRAINT "PK_d58d302a3af307236250545310b" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "transaction"
+            ADD CONSTRAINT "FK_ac3d6711c8adf322a76c0d1a227" FOREIGN KEY ("fromId") REFERENCES "wallet"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "transaction"
+            ADD CONSTRAINT "FK_a02bf62a801914225fc2cad7ff7" FOREIGN KEY ("toId") REFERENCES "wallet"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "user"
+            ADD CONSTRAINT "FK_922e8c1d396025973ec81e2a402" FOREIGN KEY ("walletId") REFERENCES "wallet"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "wager"
             ADD CONSTRAINT "FK_8058a3e28917d07be7f75d373ba" FOREIGN KEY ("leagueId") REFERENCES "league"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -110,30 +123,9 @@ export class createUsersLeaguesTransactionsWallet1671728504536 implements Migrat
             ALTER TABLE "users_to_leagues"
             ADD CONSTRAINT "FK_03e313bbc9333c20da733151ff3" FOREIGN KEY ("leagueId") REFERENCES "league"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
-        await queryRunner.query(`
-            ALTER TABLE "transaction"
-            ADD CONSTRAINT "FK_ac3d6711c8adf322a76c0d1a227" FOREIGN KEY ("fromId") REFERENCES "wallet"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "transaction"
-            ADD CONSTRAINT "FK_a02bf62a801914225fc2cad7ff7" FOREIGN KEY ("toId") REFERENCES "wallet"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "user"
-            ADD CONSTRAINT "FK_922e8c1d396025973ec81e2a402" FOREIGN KEY ("walletId") REFERENCES "wallet"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
-            ALTER TABLE "user" DROP CONSTRAINT "FK_922e8c1d396025973ec81e2a402"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "transaction" DROP CONSTRAINT "FK_a02bf62a801914225fc2cad7ff7"
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "transaction" DROP CONSTRAINT "FK_ac3d6711c8adf322a76c0d1a227"
-        `);
         await queryRunner.query(`
             ALTER TABLE "users_to_leagues" DROP CONSTRAINT "FK_03e313bbc9333c20da733151ff3"
         `);
@@ -156,13 +148,13 @@ export class createUsersLeaguesTransactionsWallet1671728504536 implements Migrat
             ALTER TABLE "wager" DROP CONSTRAINT "FK_8058a3e28917d07be7f75d373ba"
         `);
         await queryRunner.query(`
-            DROP TABLE "user"
+            ALTER TABLE "user" DROP CONSTRAINT "FK_922e8c1d396025973ec81e2a402"
         `);
         await queryRunner.query(`
-            DROP TABLE "wallet"
+            ALTER TABLE "transaction" DROP CONSTRAINT "FK_a02bf62a801914225fc2cad7ff7"
         `);
         await queryRunner.query(`
-            DROP TABLE "transaction"
+            ALTER TABLE "transaction" DROP CONSTRAINT "FK_ac3d6711c8adf322a76c0d1a227"
         `);
         await queryRunner.query(`
             DROP TABLE "users_to_leagues"
@@ -172,6 +164,15 @@ export class createUsersLeaguesTransactionsWallet1671728504536 implements Migrat
         `);
         await queryRunner.query(`
             DROP TABLE "wager"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "user"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "wallet"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "transaction"
         `);
     }
 

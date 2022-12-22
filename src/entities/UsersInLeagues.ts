@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId, Unique } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { League } from './League';
@@ -17,8 +17,11 @@ export class UsersToLeagues extends BaseEntity {
   @Column({ nullable: false, default: false })
   isOwner!: boolean;
 
-  @Column({ nullable: false })
+  @RelationId((user: UsersToLeagues) => user.invitedBy)
   invitedById: string;
+
+  @Column({ default: false })
+  accepted: boolean;
 
   @ManyToOne(() => User)
   invitedBy: User;
