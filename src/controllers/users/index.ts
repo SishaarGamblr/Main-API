@@ -39,6 +39,7 @@ export default async (fastify: FastifyInstance) => {
         email: request.body.email,
         phone: request.body.phone,
         name: request.body.name,
+        password: request.body.password
       });
 
       reply.send(user);

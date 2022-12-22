@@ -41,8 +41,9 @@ export const Create = {
       email: { type: 'string' },
       phone: { type: 'string' },
       name: { type: 'string' },
+      password: { type: 'string' },
     },
-    required: ['email', 'phone', 'name'],
+    required: ['email', 'phone', 'name', 'password'],
   },
   response: UserResponse,
 };
@@ -51,6 +52,7 @@ export interface ICreateBody {
   email: string;
   phone: string;
   name: string;
+  password: string;
 }
 
 export const Delete = {
