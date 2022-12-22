@@ -2,7 +2,7 @@ import Container from 'typedi';
 import { TransactionsService } from '../transactions';
 import { Transaction } from '../../entities/Transaction';
 import { Wallet } from '../../entities/Wallet';
-import { InsufficientBalanceError } from '../../lib/errors/errors';
+import { InsufficientBalanceError, NotFoundError } from '../../lib/errors/errors';
 
 describe('Transactions Service', () => {
   const transactionsService = Container.get(TransactionsService);
@@ -83,6 +83,93 @@ describe('Transactions Service', () => {
       });
     });
   });
+
+  describe('findOneOrFail', () => {
+    describe('finding an existing transaction', () => {
+      let transaction: Transaction;
+
+      beforeAll(async () => {
+        const wallet = await Wallet.create().save();
+        transaction = await Transaction.create({
+          amount: 1,
+          from: { id: wallet.id },
+          to: { id: wallet.id },
+        }).save();
+      });
+
+      afterAll(async () => {
+        const [wallets, transactions] = await Promise.all([
+          Wallet.find(),
+          Transaction.find(),
+        ]);
+
+        await Transaction.remove(transactions);
+        await Wallet.remove(wallets);
+      });
+
+      it('returns the transaction', async () => {
+        const response = await transactionsService.findOneOrFail(transaction.id);
+
+        expect(response).toBeDefined();
+        expect(response?.id).toBe(transaction.id);
+      });
+    });
+
+    describe('finding a deleted transaction', () => {
+      let transaction: Transaction;
+
+      beforeAll(async () => {
+        const wallet = await Wallet.create().save();
+        transaction = await Transaction.create({
+          amount: 1,
+          from: { id: wallet.id },
+          to: { id: wallet.id },
+          deleted: true,
+        }).save();
+      });
+
+      afterAll(async () => {
+        const [wallets, transactions] = await Promise.all([
+          Wallet.find(),
+          Transaction.find(),
+        ]);
+
+        await Transaction.remove(transactions);
+        await Wallet.remove(wallets);
+      });
+
+      it('returns the transaction with the `deleted` parameter', async () => {
+        const response = await transactionsService.findOneOrFail(transaction.id, {
+          deleted: true,
+        });
+
+        expect(response).toBeDefined();
+        expect(response?.id).toBe(transaction.id);
+      });
+
+      it('throws an error without the `deleted` parameter', async () => {
+        let response: Transaction | undefined;
+        let caughtErr;
+        try {
+          response = await transactionsService.findOneOrFail(transaction.id);
+        } catch (err) {
+          caughtErr = err;
+        }
+
+        expect(response).toBeUndefined();
+        expect(caughtErr).toBeDefined();
+        expect(caughtErr).toBeInstanceOf(NotFoundError);
+      });
+    });
+
+    describe('finding a non-existant transaction', () => {
+      it('returns null', async () => {
+        const response = await transactionsService.findOne('dummy');
+        expect(response).toBeNull();
+      });
+    });
+  });
+  
 
   describe('TRANSACTION', () => {
     describe('create', () => {

@@ -1,9 +1,9 @@
 import Container, { Service } from 'typedi';
 import { Transaction } from '../entities/Transaction';
-import { FindOneOptions } from 'typeorm';
+import { EntityNotFoundError, FindOneOptions } from 'typeorm';
 import connection from '../utils/database/connection';
 import { Wallet } from '../entities/Wallet';
-import { InsufficientBalanceError } from '../lib/errors/errors';
+import { InsufficientBalanceError, NotFoundError } from '../lib/errors/errors';
 
 @Service()
 export class TransactionsService {
@@ -18,14 +18,20 @@ export class TransactionsService {
     return await Transaction.findOne(options);
   }
 
-  async findOneOrFail(id: string) {
+  async findOneOrFail(id: string, params?: FindOneDTO) {
     const options: FindOneOptions<Transaction> = {
       where: {
         id,
+        deleted: params?.deleted ? params.deleted : false,
       },
     };
 
-    return await Transaction.findOneOrFail(options);
+    return await Transaction.findOneOrFail(options).catch((err) => {
+      if (err instanceof EntityNotFoundError) {
+        throw new NotFoundError('Transaction');
+      }
+      throw err;
+    });
   }
 
   TRANSACTION = {
