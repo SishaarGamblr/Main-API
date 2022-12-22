@@ -11,7 +11,7 @@ describe('Users Service', () => {
     const users = await User.find();
 
     await User.remove(users);
-  })
+  });
 
   describe('findOne', () => {
     describe('finding an existing user', () => {
@@ -106,11 +106,11 @@ describe('Users Service', () => {
 
       it('creates a wallet associated with the user', async () => {
         const wallet = await Wallet.findOne({
-          where: { owner: { id: user.id }}
+          where: { owner: { id: user.id } },
         });
 
         expect(wallet).toBeDefined();
-      })
+      });
     });
 
     describe('creating an already existing user', () => {
@@ -218,7 +218,7 @@ describe('Users Service', () => {
     describe('deleting a non-existing user', () => {
       it('does not throw an error', async () => {
         expect(() => usersService.delete('dummy')).not.toThrowError();
-      })
-    })
-  })
+      });
+    });
+  });
 });

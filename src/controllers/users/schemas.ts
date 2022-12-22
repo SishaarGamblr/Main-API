@@ -12,12 +12,12 @@ export const UserResponse = {
     },
   },
   '4xx': {
-    ...ErrorSchemas.Error
+    ...ErrorSchemas.Error,
   },
   '5xx': {
-    ...ErrorSchemas.Error
-  }
-}
+    ...ErrorSchemas.Error,
+  },
+};
 
 export const FindById = {
   params: {
@@ -25,10 +25,10 @@ export const FindById = {
     properties: {
       id: { type: 'string' },
     },
-    required: ['id']
+    required: ['id'],
   },
-  response: UserResponse
-}
+  response: UserResponse,
+};
 
 export interface IFindByIdParams {
   id: string;
@@ -44,8 +44,8 @@ export const Create = {
     },
     required: ['email', 'phone', 'name'],
   },
-  response: UserResponse
-}
+  response: UserResponse,
+};
 
 export interface ICreateBody {
   email: string;
@@ -59,13 +59,13 @@ export const Delete = {
     properties: {
       id: { type: 'string' },
     },
-    required: ['id']
+    required: ['id'],
   },
   response: {
     '2xx': { type: 'string' },
     '4xx': ErrorSchemas.Error,
-  }
-}
+  },
+};
 
 export interface IDeleteParams {
   id: string;

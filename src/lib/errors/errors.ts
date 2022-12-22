@@ -6,3 +6,8 @@ export const AlreadyExistsError = createError(
   '%s already exists.',
   400
 );
+export const InsufficientBalanceError = createError(
+  'INSUFFICENT_WALLET_BALANCE',
+  'Wallet does not have sufficient balance for this operation',
+  403
+);

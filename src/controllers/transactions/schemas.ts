@@ -1,13 +1,14 @@
 import { BasePropertiesSchema } from '../../entities/BaseEntity';
 import { Schemas as ErrorSchemas } from '../../lib/errors/schemas';
 
-export const LeagueResponse = {
+export const TransactionResponse = {
   200: {
     type: 'object',
     properties: {
       ...BasePropertiesSchema,
-      name: { type: 'string' },
-      ownerId: { type: 'string' },
+      amount: { type: 'number' },
+      fromId: { type: 'string' },
+      toId: { type: 'string' },
     },
   },
   '4xx': {
@@ -26,7 +27,7 @@ export const FindById = {
     },
     required: ['id'],
   },
-  response: LeagueResponse,
+  response: TransactionResponse,
 };
 
 export interface IFindByIdParams {
@@ -37,33 +38,17 @@ export const Create = {
   body: {
     type: 'object',
     properties: {
-      ownerId: { type: 'string' },
-      name: { type: 'string' },
+      fromId: { type: 'string' },
+      toId: { type: 'string' },
+      amount: { type: 'number' },
     },
-    required: ['ownerId', 'name'],
+    required: ['fromId', 'toId', 'amount'],
   },
-  response: LeagueResponse,
+  response: TransactionResponse,
 };
 
 export interface ICreateBody {
-  name: string;
-  ownerId: string;
-}
-
-export const Delete = {
-  params: {
-    type: 'object',
-    properties: {
-      id: { type: 'string' },
-    },
-    required: ['id'],
-  },
-  response: {
-    '2xx': { type: 'string' },
-    '4xx': ErrorSchemas.Error,
-  },
-};
-
-export interface IDeleteParams {
-  id: string;
+  fromId: string;
+  toId: string;
+  amount: number;
 }

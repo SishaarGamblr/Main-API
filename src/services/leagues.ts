@@ -1,7 +1,6 @@
-import { Service } from "typedi";
-import { League } from "../entities/League";
-import { FindOneOptions } from "typeorm";
-
+import { Service } from 'typedi';
+import { League } from '../entities/League';
+import { FindOneOptions } from 'typeorm';
 
 @Service()
 export class LeaguesService {
@@ -19,10 +18,10 @@ export class LeaguesService {
   async create(options: CreateLeagueDTO): Promise<League | never> {
     const league = await League.create({
       name: options.name,
-      owner: { id: options.ownerId }
+      owner: { id: options.ownerId },
     }).save();
 
-    return await League.findOneOrFail({where: { id: league.id }});
+    return await League.findOneOrFail({ where: { id: league.id } });
   }
 
   async delete(id: string) {

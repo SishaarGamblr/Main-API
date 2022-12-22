@@ -1,8 +1,4 @@
-import {
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
-} from 'fastify';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import Container from 'typedi';
 import { UserService } from '../../services/users';
 import { NotFoundError } from '../../lib/errors/errors';
@@ -12,7 +8,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.get(
     '/:id',
     {
-      schema: Schemas.FindById
+      schema: Schemas.FindById,
     },
     async function findById(
       request: FastifyRequest<{ Params: Schemas.IFindByIdParams }>,
@@ -32,7 +28,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.post(
     '/',
     {
-      schema: Schemas.Create
+      schema: Schemas.Create,
     },
     async function create(
       request: FastifyRequest<{ Body: Schemas.ICreateBody }>,
@@ -52,7 +48,7 @@ export default async (fastify: FastifyInstance) => {
   fastify.delete(
     '/:id',
     {
-      schema: Schemas.Delete
+      schema: Schemas.Delete,
     },
     async function create(
       request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
