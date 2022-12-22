@@ -8,7 +8,7 @@ export class Wallet extends BaseEntity {
   prefix = 'wall_';
 
   @Column({ default: 0, nullable: false })
-  balance!: 0;
+  balance!: number;
 
   @OneToOne(() => User, (user) => user.wallet)
   owner!: User;
