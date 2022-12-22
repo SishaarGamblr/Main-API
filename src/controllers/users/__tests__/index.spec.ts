@@ -77,6 +77,7 @@ describe('Users Controller', () => {
             email: 'dummy',
             phone: 'dummy',
             name: 'dummy',
+            password: 'dummy'
           },
         });
 
@@ -109,6 +110,7 @@ describe('Users Controller', () => {
             email: 'dummy',
             phone: 'dummy',
             name: 'dummy',
+            password: 'dummy',
           },
         });
 
@@ -160,6 +162,7 @@ describe('Users Controller', () => {
             email: 'dummy',
             phone: 'dummy',
             name: 'dummy',
+            password: 'dummy',
           },
         });
 
