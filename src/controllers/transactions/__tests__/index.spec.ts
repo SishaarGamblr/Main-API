@@ -11,25 +11,21 @@ describe('Transactions Controller', () => {
   });
 
   describe('POST /transactions', () => {
-    describe('successfully creating a transaction', () => {
-      let fromWallet: Wallet;
-      let toWallet: Wallet;
+    describe('creating a transaction', () => {
+      let wallet: Wallet;
       let transaction: Transaction;
       let response: Response;
 
-      const AMOUNT = 100;
-
       beforeAll(async () => {
-        fromWallet = await Wallet.create({ balance: AMOUNT }).save();
-        toWallet = await Wallet.create().save();
+        wallet = await Wallet.create().save();
         transaction = await Transaction.create({
-          amount: AMOUNT,
-          from: { id: fromWallet.id },
-          to: { id: toWallet.id },
+          amount: 100,
+          from: { id: wallet.id },
+          to: { id: wallet.id },
         }).save();
       });
 
-      beforeAll(async () => {
+      beforeAll(() => {
         const mockTransactionService = {
           TRANSACTION: {
             create: () => Promise.resolve(transaction),
@@ -53,44 +49,39 @@ describe('Transactions Controller', () => {
           method: 'POST',
           url: '/transactions',
           payload: {
-            amount: AMOUNT,
-            fromId: fromWallet.id,
-            toId: toWallet.id,
+            amount: 100,
+            fromId: wallet.id,
+            toId: wallet.id,
           },
         });
 
         expect(response.statusCode).toBe(200);
       });
 
-      it('deducts the amount from the origin wallet', async () => {
-        await fromWallet.reload();
-        expect(fromWallet.balance).toBe(0);
-      });
-
-      it('adds the amount to the recipient wallet', async () => {
-        await toWallet.reload();
-        expect(toWallet.balance).toBe(AMOUNT);
-      });
-
-      it('creates a transaction object', async () => {
+      it('sets payload properties on the transaction', async () => {
         const responseJson = response.json();
         expect(responseJson.id).toBe(transaction.id);
-        expect(responseJson.amount).toBe(AMOUNT);
-        expect(responseJson.fromId).toBe(fromWallet.id);
-        expect(responseJson.toId).toBe(toWallet.id);
+        expect(responseJson.amount).toBe(transaction.amount);
+        expect(responseJson.fromId).toBe(transaction.fromId);
+        expect(responseJson.toId).toBe(transaction.toId);
       });
     });
 
-    describe('trying to create a transaction for a wallet with insufficient balance', () => {
-      let fromWallet: Wallet;
-      let toWallet: Wallet;
+    describe('creating a transaction that fails', () => {
+      let wallet: Wallet;
       let response: Response;
 
-      const AMOUNT = 50;
-
       beforeAll(async () => {
-        fromWallet = await Wallet.create({ balance: AMOUNT }).save();
-        toWallet = await Wallet.create().save();
+        wallet = await Wallet.create().save();
+      });
+
+      beforeAll(() => {
+        const mockTransactionService = {
+          TRANSACTION: {
+            create: () => Promise.reject(new Error('dummy')),
+          },
+        };
+        Container.set(TransactionsService, mockTransactionService);
       });
 
       afterAll(async () => {
@@ -108,114 +99,16 @@ describe('Transactions Controller', () => {
           method: 'POST',
           url: '/transactions',
           payload: {
-            amount: AMOUNT * 2,
-            fromId: fromWallet.id,
-            toId: toWallet.id,
+            amount: 100,
+            fromId: wallet.id,
+            toId: wallet.id,
           },
         });
 
-        expect(response.statusCode).toBe(403);
-        expect(JSON.parse(response.body).code).toBe(
-          'INSUFFICENT_WALLET_BALANCE'
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toMatchInlineSnapshot(
+          `"{"statusCode":500,"error":"Internal Server Error","message":"dummy"}"`
         );
-      });
-
-      it('does not deduct the amount from the origin wallet', async () => {
-        await fromWallet.reload();
-        expect(fromWallet.balance).toBe(AMOUNT);
-      });
-
-      it('does not add the amount to the recipient wallet', async () => {
-        await toWallet.reload();
-        expect(toWallet.balance).toBe(0);
-      });
-
-      it('does not create a transaction', async () => {
-        const transactions = await Transaction.find();
-        expect(transactions.length).toBe(0);
-      });
-    });
-
-    describe('creating many transactions in parallel', () => {
-      let fromWallet: Wallet;
-      let toWallet: Wallet;
-      let transaction: Transaction;
-
-      const AMOUNT = 100;
-
-      beforeAll(async () => {
-        fromWallet = await Wallet.create({ balance: AMOUNT * 3 }).save();
-        toWallet = await Wallet.create().save();
-        transaction = await Transaction.create({
-          amount: AMOUNT,
-          from: { id: fromWallet.id },
-          to: { id: toWallet.id },
-        }).save();
-      });
-
-      beforeAll(async () => {
-        const mockTransactionService = {
-          TRANSACTION: {
-            create: () => Promise.resolve(transaction),
-          },
-        };
-        Container.set(TransactionsService, mockTransactionService);
-      });
-
-      afterAll(async () => {
-        const [wallets, transactions] = await Promise.all([
-          Wallet.find(),
-          Transaction.find(),
-        ]);
-
-        await Transaction.remove(transactions);
-        await Wallet.remove(wallets);
-      });
-
-      it('does not throw an error', async () => {
-        const [response_1, response_2, response_3] = await Promise.all([
-          server.inject({
-            method: 'POST',
-            url: '/transactions',
-            payload: {
-              amount: AMOUNT,
-              fromId: fromWallet.id,
-              toId: toWallet.id,
-            },
-          }),
-          server.inject({
-            method: 'POST',
-            url: '/transactions',
-            payload: {
-              amount: AMOUNT,
-              fromId: fromWallet.id,
-              toId: toWallet.id,
-            },
-          }),
-          server.inject({
-            method: 'POST',
-            url: '/transactions',
-            payload: {
-              amount: AMOUNT,
-              fromId: fromWallet.id,
-              toId: toWallet.id,
-            },
-          }),
-        ]);
-
-        expect(response_1.statusCode).toBe(200);
-        expect(response_2.statusCode).toBe(200);
-        expect(response_3.statusCode).toBe(200);
-      });
-
-      it('deducts the total amount from the origin wallet', async () => {
-        await fromWallet.reload();
-        expect(fromWallet.balance).toBe(0);
-      });
-
-      it('adds the total amount to the recipient wallet', async () => {
-        await toWallet.reload();
-        expect(toWallet.balance).toBe(AMOUNT * 3);
       });
     });
   });
