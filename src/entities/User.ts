@@ -16,6 +16,9 @@ export class User extends BaseEntity {
   @Column({ nullable: false, unique: true })
   phone!: string;
 
+  @Column({ nullable: false })
+  password!: string;
+
   @OneToMany(() => UsersToLeagues, (userToLeague) => userToLeague.userId)
   userToLeagues!: UsersToLeagues[];
 
