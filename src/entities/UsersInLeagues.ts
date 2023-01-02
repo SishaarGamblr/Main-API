@@ -29,6 +29,6 @@ export class UsersToLeagues extends BaseEntity {
   @ManyToOne(() => User, (user) => user.userToLeagues)
   user!: User;
 
-  @ManyToOne(() => League, (league) => league.leaguesToUsers)
+  @ManyToOne(() => League, (league) => league.leaguesToUsers, { onDelete: 'CASCADE'})
   league!: League;
 }

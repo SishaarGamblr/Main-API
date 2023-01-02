@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class createUsersLeaguesTransactionsWallet1672665617217 implements MigrationInterface {
-    name = 'createUsersLeaguesTransactionsWallet1672665617217'
+export class createUsersLeaguesTransactionsWallet1672665671981 implements MigrationInterface {
+    name = 'createUsersLeaguesTransactionsWallet1672665671981'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -121,7 +121,7 @@ export class createUsersLeaguesTransactionsWallet1672665617217 implements Migrat
         `);
         await queryRunner.query(`
             ALTER TABLE "users_to_leagues"
-            ADD CONSTRAINT "FK_03e313bbc9333c20da733151ff3" FOREIGN KEY ("leagueId") REFERENCES "league"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_03e313bbc9333c20da733151ff3" FOREIGN KEY ("leagueId") REFERENCES "league"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `);
     }
 
