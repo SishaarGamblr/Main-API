@@ -162,10 +162,10 @@ describe('Transactions Service', () => {
       });
     });
 
-    describe('finding a non-existant transaction', () => {
-      it('returns null', async () => {
-        const response = await transactionsService.findOne('dummy');
-        expect(response).toBeNull();
+    describe('finding a non-existent transaction', () => {
+      it('throws an error', async () => {
+        const response = await transactionsService.findOneOrFail('dummy').catch(err => err);
+        expect(response).toBeInstanceOf(NotFoundError);
       });
     });
   });

@@ -21,6 +21,16 @@ export class LeaguesService {
     return await League.findOne(options);
   }
 
+  async findOneOrFail(id: string, params?: FindOneDTO) {
+    const league = await this.findOne(id, params);
+
+    if (!league) {
+      throw new NotFoundError('league');
+    }
+
+    return league;
+  }
+
   async create(options: CreateLeagueDTO): Promise<League | never> {
     const league = await League.create({
       name: options.name,

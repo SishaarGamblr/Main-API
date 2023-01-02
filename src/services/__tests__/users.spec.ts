@@ -1,7 +1,7 @@
 import Container from 'typedi';
 import { User } from '../../entities/User';
 import { UserService } from '../users';
-import { AlreadyExistsError } from '../../lib/errors/errors';
+import { AlreadyExistsError, NotFoundError } from '../../lib/errors/errors';
 import { Wallet } from '../../entities/Wallet';
 
 describe('Users Service', () => {
@@ -73,6 +73,13 @@ describe('Users Service', () => {
         const response = await usersService.findOne('dummy');
         expect(response).toBeNull();
       });
+
+      describe('findOneOrFail', () => {
+        it('throws an error', async () => {
+          const response = await usersService.findOneOrFail('dummy').catch(err => err);
+          expect(response).toBeInstanceOf(NotFoundError);
+        })
+      })
     });
   });
 

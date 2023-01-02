@@ -3,6 +3,7 @@ import { User } from '../../entities/User';
 import { LeaguesService } from '../leagues';
 import { League } from '../../entities/League';
 import { UsersToLeagues } from '../../entities/UsersInLeagues';
+import { NotFoundError } from '../../lib/errors/errors';
 
 describe('Leagues Service', () => {
   const leaguesService = Container.get(LeaguesService);
@@ -82,12 +83,20 @@ describe('Leagues Service', () => {
       });
     });
 
-    describe('finding a non-existant league', () => {
+    describe('finding a non-existent league', () => {
       it('returns null', async () => {
         const response = await leaguesService.findOne('dummy');
         expect(response).toBeNull();
       });
+
+      describe('findOneOrFail', () => {
+        it('throws an error null', async () => {
+          const response = await leaguesService.findOneOrFail('dummy').catch(err => err);
+          expect(response).toBeInstanceOf(NotFoundError);
+        });
+      })
     });
+
   });
 
   describe('create', () => {
