@@ -1,9 +1,15 @@
 import { Service } from 'typedi';
 import { League } from '../entities/League';
 import { FindOneOptions } from 'typeorm';
+import { UserService } from './users';
+import { NotFoundError } from '../lib/errors/errors';
+import { UsersToLeagues } from '../entities/UsersInLeagues';
 
 @Service()
 export class LeaguesService {
+
+  constructor(private readonly usersService: UserService) {}
+
   async findOne(id: string, params?: FindOneDTO) {
     const options: FindOneOptions<League> = {
       where: {
@@ -21,6 +27,13 @@ export class LeaguesService {
       owner: { id: options.ownerId },
     }).save();
 
+    await UsersToLeagues.create({
+      accepted: true,
+      isOwner: true,
+      league,
+      user: { id: options.ownerId }
+    }).save();
+
     return await League.findOneOrFail({ where: { id: league.id } });
   }
 
@@ -30,6 +43,24 @@ export class LeaguesService {
       league.deleted = true;
       await league.save();
     }
+  }
+
+  async inviteUser(id: string, userId: string, invitedById?: string) {
+    const league = await this.findOne(id);
+    if (!league) {
+      throw new NotFoundError('League');
+    }
+
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new NotFoundError('User');
+    }
+
+    await UsersToLeagues.create({
+      invitedBy: { id: invitedById },
+      league,
+      user,
+    }).save();
   }
 }
 

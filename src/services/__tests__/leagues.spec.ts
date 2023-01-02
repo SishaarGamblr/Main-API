@@ -2,6 +2,7 @@ import Container from 'typedi';
 import { User } from '../../entities/User';
 import { LeaguesService } from '../leagues';
 import { League } from '../../entities/League';
+import { UsersToLeagues } from '../../entities/UsersInLeagues';
 
 describe('Leagues Service', () => {
   const leaguesService = Container.get(LeaguesService);
@@ -115,6 +116,18 @@ describe('Leagues Service', () => {
         expect(league).toBeDefined();
         expect(league.name).toBe('dummy');
       });
+
+      it('designates the user creating the league as the owner', async () => {
+        const userToLeague = await UsersToLeagues.findOne({
+          where: {
+            userId: owner.id
+          }
+        });
+
+        expect(userToLeague).toBeDefined();
+        expect(userToLeague?.leagueId).toBe(league.id);
+        expect(userToLeague?.isOwner).toBe(true);
+      })
     });
 
     describe('an unexpected error is encountered', () => {
@@ -184,4 +197,51 @@ describe('Leagues Service', () => {
       });
     });
   });
+
+  describe('inviteUser', () => {
+    describe('inviting a user to a league', () => {
+      let invitedUser: User;
+      let league: League;
+      
+      beforeAll(async () => {
+        league = await League.create({
+          owner: owner,
+          name: 'dummy',
+        }).save();
+
+        invitedUser = await User.create({
+          phone: 'invited_dummy',
+          name: 'invited_dummy',
+          email: 'invited_dummy',
+        }).save();
+      });
+
+      afterAll(async () => {
+        await league.remove();
+        await invitedUser.remove();
+      });
+
+      it('does not throw an error', async () => {
+        let caughtErr;
+        try {
+          await leaguesService.inviteUser(league.id, invitedUser.id, owner.id);
+        } catch (err) {
+          caughtErr = err;
+        }
+
+        expect(caughtErr).toBeUndefined();
+      });
+
+      it('links the user to the league pending they accept their invite', async () => {
+        let userAddedToLeague = await UsersToLeagues.findOneBy({
+          leagueId: league.id,
+          userId: invitedUser.id
+        });
+
+        expect(userAddedToLeague).toBeDefined();
+        expect(userAddedToLeague?.invitedById).toBe(owner.id);
+      });
+
+    });
+  })
 });
