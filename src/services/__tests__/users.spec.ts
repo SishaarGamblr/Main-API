@@ -22,6 +22,7 @@ describe('Users Service', () => {
           email: 'dummy',
           phone: 'dummy',
           name: 'dummy',
+          password: 'dummy',
         }).save();
       });
 
@@ -45,6 +46,7 @@ describe('Users Service', () => {
           email: 'dummy',
           phone: 'dummy',
           name: 'dummy',
+          password: 'dummy',
           deleted: true,
         }).save();
       });
@@ -89,6 +91,7 @@ describe('Users Service', () => {
             email: 'dummy',
             name: 'dummy',
             phone: 'dummy',
+            password: 'dummy',
           });
         } catch (err) {
           caughtErr = err;
@@ -121,6 +124,7 @@ describe('Users Service', () => {
           email: 'dummy',
           phone: 'dummy',
           name: 'dummy',
+          password: 'dummy',
         }).save();
       });
 
@@ -135,6 +139,7 @@ describe('Users Service', () => {
             email: 'dummy',
             name: 'dummy',
             phone: 'dummy',
+            password: 'dummy',
           });
         } catch (err) {
           caughtErr = err;
@@ -172,6 +177,7 @@ describe('Users Service', () => {
             email: 'dummy',
             name: 'dummy',
             phone: 'dummy',
+            password: 'dummy',
           });
         } catch (err) {
           caughtErr = err;
@@ -191,6 +197,7 @@ describe('Users Service', () => {
           email: 'dummy',
           phone: 'dummy',
           name: 'dummy',
+          password: 'dummy',
         }).save();
       });
 
@@ -218,6 +225,41 @@ describe('Users Service', () => {
     describe('deleting a non-existing user', () => {
       it('does not throw an error', async () => {
         expect(() => usersService.delete('dummy')).not.toThrowError();
+      });
+    });
+  });
+
+  describe('checkPassword', () => {
+    describe('verifying a provided plaintext password', () => {
+      let user: User;
+      const password = 'PA$$WORD';
+
+      beforeAll(async () => {
+        user = await usersService.create({
+          email: 'dummy',
+          phone: 'dummy',
+          name: 'dummy',
+          password,
+        });
+      });
+
+      afterAll(async () => {
+        await user?.remove();
+      });
+
+      it('saves an encrypted password', async () => {
+        await user.reload();
+        expect(user.password).toMatch(/^\$2b\$10\$/);
+      });
+
+      it('returns true if the provided plain-text password matches the saved encrypted password', async () => {
+        const match = await usersService.checkPassword(user.id, password);
+        expect(match).toBe(true);
+      });
+
+      it('returns false if the provided plain-text password does not match the saved encrypted password', async () => {
+        const match = await usersService.checkPassword(user.id, 'dummy');
+        expect(match).toBe(false);
       });
     });
   });

@@ -2,6 +2,8 @@ import { FindOneOptions, QueryFailedError } from 'typeorm';
 import { User } from '../entities/User';
 import { Service } from 'typedi';
 import { AlreadyExistsError } from '../lib/errors/errors';
+import bcrypt from 'bcrypt';
+import Config from 'config';
 
 @Service()
 export class UserService {
@@ -22,6 +24,7 @@ export class UserService {
         email: options.email,
         phone: options.phone,
         name: options.name,
+        password: await this.getEncryptedPassword(options.password),
         wallet: {},
       }).save();
 
@@ -41,6 +44,32 @@ export class UserService {
       await user.save();
     }
   }
+
+  /**
+   * Generates an encrypted password via the Blowfish Cipher + Salt
+   * @param plaintextPassword the plain-text password to encrypt
+   * @returns the encrypted password
+   */
+  private async getEncryptedPassword(plaintextPassword: string): Promise<string> {
+    return bcrypt.hash(plaintextPassword, Config.get<number>('security.salt_rounds'));
+  }
+
+  /**
+   * Verifies whether a provided plain-text password matches the user's set password
+   * @param userId the ID of the user to check
+   * @param plaintextPassword the plain-text password provided by the attempt
+   * @returns true if the password matches the user's set password
+   */
+  async checkPassword(userId: string, plaintextPassword: string): Promise<boolean> {
+    const user = await this.findOne(userId);
+    if (!user) {
+      return false;
+    }
+
+    const encryptedPassword = user.password;
+
+    return await bcrypt.compare(plaintextPassword, encryptedPassword);
+  }
 }
 
 interface FindOneDTO {
@@ -51,4 +80,5 @@ interface CreateUserDTO {
   email: string;
   phone: string;
   name: string;
+  password: string;
 }

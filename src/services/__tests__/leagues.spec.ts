@@ -12,6 +12,7 @@ describe('Leagues Service', () => {
       phone: 'dummy',
       name: 'dummy',
       email: 'dummy',
+      password: 'dummy'
     }).save();
   });
 
