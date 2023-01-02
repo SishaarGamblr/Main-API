@@ -56,15 +56,9 @@ export class LeaguesService {
   }
 
   async inviteUser(id: string, userId: string, invitedById?: string) {
-    const league = await this.findOne(id);
-    if (!league) {
-      throw new NotFoundError('League');
-    }
+    const league = await this.findOneOrFail(id);
 
-    const user = await this.usersService.findOne(userId);
-    if (!user) {
-      throw new NotFoundError('User');
-    }
+    const user = await this.usersService.findOneOrFail(userId);
 
     await UsersToLeagues.create({
       invitedBy: { id: invitedById },
