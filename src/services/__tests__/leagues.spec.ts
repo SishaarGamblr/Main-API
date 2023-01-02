@@ -222,6 +222,7 @@ describe('Leagues Service', () => {
           phone: 'invited_dummy',
           name: 'invited_dummy',
           email: 'invited_dummy',
+          password: 'invited_password'
         }).save();
       });
 
