@@ -44,7 +44,7 @@ export class LeaguesService {
       user: { id: options.ownerId }
     }).save();
 
-    return await League.findOneOrFail({ where: { id: league.id } });
+    return await this.findOneOrFail(league.id);
   }
 
   async delete(id: string) {

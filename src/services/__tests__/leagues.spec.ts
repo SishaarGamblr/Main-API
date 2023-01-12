@@ -14,7 +14,7 @@ describe('Leagues Service', () => {
       phone: 'dummy',
       name: 'dummy',
       email: 'dummy',
-      password: 'dummy'
+      password: 'dummy',
     }).save();
   });
 
@@ -91,12 +91,13 @@ describe('Leagues Service', () => {
 
       describe('findOneOrFail', () => {
         it('throws an error null', async () => {
-          const response = await leaguesService.findOneOrFail('dummy').catch(err => err);
+          const response = await leaguesService
+            .findOneOrFail('dummy')
+            .catch((err) => err);
           expect(response).toBeInstanceOf(NotFoundError);
         });
-      })
+      });
     });
-
   });
 
   describe('create', () => {
@@ -129,14 +130,14 @@ describe('Leagues Service', () => {
       it('designates the user creating the league as the owner', async () => {
         const userToLeague = await UsersToLeagues.findOne({
           where: {
-            userId: owner.id
-          }
+            userId: owner.id,
+          },
         });
 
         expect(userToLeague).toBeDefined();
         expect(userToLeague?.leagueId).toBe(league.id);
         expect(userToLeague?.isOwner).toBe(true);
-      })
+      });
     });
 
     describe('an unexpected error is encountered', () => {
@@ -211,7 +212,7 @@ describe('Leagues Service', () => {
     describe('inviting a user to a league', () => {
       let invitedUser: User;
       let league: League;
-      
+
       beforeAll(async () => {
         league = await League.create({
           owner: owner,
@@ -222,7 +223,7 @@ describe('Leagues Service', () => {
           phone: 'invited_dummy',
           name: 'invited_dummy',
           email: 'invited_dummy',
-          password: 'invited_password'
+          password: 'invited_password',
         }).save();
       });
 
@@ -245,13 +246,70 @@ describe('Leagues Service', () => {
       it('links the user to the league pending they accept their invite', async () => {
         let userAddedToLeague = await UsersToLeagues.findOneBy({
           leagueId: league.id,
-          userId: invitedUser.id
+          userId: invitedUser.id,
         });
 
         expect(userAddedToLeague).toBeDefined();
         expect(userAddedToLeague?.invitedById).toBe(owner.id);
       });
-
     });
-  })
+
+    describe('inviting a user to a league which does not exist', () => {
+      let invitedUser: User;
+
+      beforeAll(async () => {
+        invitedUser = await User.create({
+          phone: 'invited_dummy',
+          name: 'invited_dummy',
+          email: 'invited_dummy',
+          password: 'invited_password',
+        }).save();
+      });
+
+      afterAll(async () => {
+        await invitedUser.remove();
+      });
+
+      it('throws an error', async () => {
+        let caughtErr;
+        try {
+          await leaguesService.inviteUser('dummy', invitedUser.id, owner.id);
+        } catch (err) {
+          caughtErr = err;
+        }
+
+        expect(caughtErr).toMatchInlineSnapshot(
+          `[FastifyError: league not found.]`
+        );
+      });
+    });
+
+    describe('inviting a user which does not exist to a league', () => {
+      let league: League;
+
+      beforeAll(async () => {
+        league = await League.create({
+          owner: owner,
+          name: 'dummy',
+        }).save();
+      });
+
+      afterAll(async () => {
+        await league.remove();
+      });
+
+      it('throws an error', async () => {
+        let caughtErr;
+        try {
+          await leaguesService.inviteUser(league.id, 'dummy', owner.id);
+        } catch (err) {
+          caughtErr = err;
+        }
+
+        expect(caughtErr).toMatchInlineSnapshot(
+          `[FastifyError: user not found.]`
+        );
+      });
+    });
+  });
 });
