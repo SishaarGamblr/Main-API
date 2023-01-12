@@ -6,8 +6,8 @@ FROM build AS development
 WORKDIR /app
 ENV NODE_ENV development
 COPY . .
-RUN npm run build
 RUN npm install
+RUN npm run build
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
