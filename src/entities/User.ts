@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { UsersToLeagues } from './UsersInLeagues';
 import { Wallet } from './Wallet';
@@ -13,6 +13,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   email: string;
 
+  @Index()
   @Column({ nullable: false, unique: true })
   phone!: string;
 
