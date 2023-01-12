@@ -1,4 +1,4 @@
-import { FindOneOptions, QueryFailedError } from 'typeorm';
+import { FindOptionsWhere, QueryFailedError } from 'typeorm';
 import { User } from '../entities/User';
 import { Service } from 'typedi';
 import { AlreadyExistsError, NotFoundError } from '../lib/errors/errors';
@@ -7,15 +7,20 @@ import Config from 'config';
 
 @Service()
 export class UserService {
-  async findOne(id: string, params?: FindOneDTO) {
-    const options: FindOneOptions<User> = {
-      where: {
-        id,
-        deleted: params?.deleted ? params.deleted : false,
-      },
-    };
+  async findOne(id: string | null, params?: FindOneDTO) {
+    const where: FindOptionsWhere<User> = {
+      deleted: params?.deleted ? params.deleted : false,
+    }
 
-    return await User.findOne(options);
+    if (id) {
+      where.id = id;
+    }
+
+    if (params?.phone) {
+      where.phone = params.phone;
+    }
+
+    return await User.findOne({ where });
   }
 
   async findOneOrFail(id: string, params?: FindOneDTO) {
@@ -84,6 +89,7 @@ export class UserService {
 
 interface FindOneDTO {
   deleted?: boolean;
+  phone?: string;
 }
 
 interface CreateUserDTO {

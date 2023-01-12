@@ -81,6 +81,31 @@ describe('Users Service', () => {
         })
       })
     });
+
+    describe('finding a user by phone', () => {
+      let user: User;
+      const phone = 'phonenumber';
+
+      beforeAll(async () => {
+        user = await User.create({
+          email: 'dummy',
+          phone,
+          name: 'dummy',
+          password: 'dummy',
+        }).save();
+      });
+
+      afterAll(async () => {
+        await user?.remove();
+      });
+
+      it('returns the user', async () => {
+        const response = await usersService.findOne(null, { phone });
+
+        expect(response).toBeDefined();
+        expect(response).toMatchObject(user);
+      });
+    });
   });
 
   describe('create', () => {
