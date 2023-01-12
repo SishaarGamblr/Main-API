@@ -4,7 +4,7 @@
   "description": "Main API",
   "scripts": {
     "watch": "tsc --watch --preserveWatchOutput --pretty",
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon --transpile-only src/index.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf dist",
     "build": "npm run clean; tsc -p tsconfig.build.json;",
