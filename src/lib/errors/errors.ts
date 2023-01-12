@@ -11,3 +11,4 @@ export const InsufficientBalanceError = createError(
   'Wallet does not have sufficient balance for this operation',
   403
 );
+export const UnauthorizedError = createError('UNAUTHORIZED', 'Unauthorized', 401);
