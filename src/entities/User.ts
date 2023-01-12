@@ -20,9 +20,6 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   password!: string;
 
-  @Column({ nullable: true })
-  refreshToken: string;
-
   @OneToMany(() => UsersToLeagues, (userToLeague) => userToLeague.userId)
   userToLeagues!: UsersToLeagues[];
 
