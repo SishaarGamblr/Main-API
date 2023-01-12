@@ -20,7 +20,6 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   password!: string;
 
-  @Index()
   @Column({ nullable: true })
   refreshToken: string;
 
