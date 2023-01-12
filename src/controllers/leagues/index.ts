@@ -59,4 +59,21 @@ export default async (fastify: FastifyInstance) => {
       reply.code(200).send('ok');
     }
   );
+
+  fastify.put(
+    '/:id/invite/:userId',
+    {
+      schema: Schemas.InviteUser
+    },
+    async function inviteUser(
+      request: FastifyRequest<{ Params: Schemas.IInviteUserParams}>,
+      reply: FastifyReply
+    ) {
+      const leaguesService = Container.get(LeaguesService);
+      // TODO: Add invitedById based on JWT
+      await leaguesService.inviteUser(request.params.id, request.params.userId);
+
+      reply.code(200).send('ok');
+    }
+  );
 };

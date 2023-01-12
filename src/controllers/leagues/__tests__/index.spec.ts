@@ -229,4 +229,52 @@ describe('Leagues Controller', () => {
       });
     });
   });
+
+  describe('PUT /leagues/:id/invite/:userId', () => {
+    describe('inviting a user', () => {
+      beforeAll(async () => {
+        const mockLeagueService = {
+          inviteUser: () => Promise.resolve(),
+        };
+
+        Container.set(LeaguesService, mockLeagueService);
+      });
+
+      it('successfully completes', async () => {
+        const response = await server.inject({
+          method: 'PUT',
+          url: '/leagues/dummyLeagueId/invite/dummyUserId',
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toBe('ok');
+      });
+    });
+
+    describe('an unexpected error is encountered', () => {
+      beforeAll(async () => {
+        const mockLeagueService = {
+          inviteUser: () => Promise.reject(new Error('Unexpected error')),
+        };
+
+        Container.set(LeaguesService, mockLeagueService);
+      });
+
+      it('throws an error', async () => {
+        const response = await server.inject({
+          method: 'PUT',
+          url: '/leagues/dummyLeagueId/invite/dummyUserId',
+        });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.json()).toMatchInlineSnapshot(`
+          {
+            "error": "Internal Server Error",
+            "message": "Unexpected error",
+            "statusCode": 500,
+          }
+        `);
+      });
+    })
+  })
 });
