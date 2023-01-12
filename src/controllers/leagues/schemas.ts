@@ -1,6 +1,8 @@
 import { BasePropertiesSchema } from '../../entities/BaseEntity';
 import { Schemas as ErrorSchemas } from '../../lib/errors/schemas';
 
+/** Serializing a League object */
+
 export const LeagueResponse = {
   200: {
     type: 'object',
@@ -18,6 +20,8 @@ export const LeagueResponse = {
   },
 };
 
+/** Find League By ID */
+
 export const FindById = {
   params: {
     type: 'object',
@@ -32,6 +36,8 @@ export const FindById = {
 export interface IFindByIdParams {
   id: string;
 }
+
+/** Create League */
 
 export const Create = {
   body: {
@@ -50,6 +56,8 @@ export interface ICreateBody {
   ownerId: string;
 }
 
+/** Delete League */
+
 export const Delete = {
   params: {
     type: 'object',
@@ -59,11 +67,34 @@ export const Delete = {
     required: ['id'],
   },
   response: {
-    '2xx': { type: 'string' },
+    '200': { type: 'string' },
     '4xx': ErrorSchemas.Error,
+    '5xx': ErrorSchemas.Error
   },
 };
 
 export interface IDeleteParams {
   id: string;
+}
+
+/** Invite User to League */
+export const InviteUser = {
+  params: {
+    type: 'object',
+    properties: {
+      id: { type: 'string' },
+      userId: { type: 'string' },
+    },
+    required: ['id', 'userId'],
+  },
+  response: {
+    '200': { type: 'string' },
+    '4xx': ErrorSchemas.Error,
+    '5xx': ErrorSchemas.Error
+  }
+}
+
+export interface IInviteUserParams {
+  id: string;
+  userId: string;
 }

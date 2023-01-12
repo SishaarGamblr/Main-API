@@ -1,7 +1,7 @@
 import { FindOneOptions, QueryFailedError } from 'typeorm';
 import { User } from '../entities/User';
 import { Service } from 'typedi';
-import { AlreadyExistsError } from '../lib/errors/errors';
+import { AlreadyExistsError, NotFoundError } from '../lib/errors/errors';
 import bcrypt from 'bcrypt';
 import Config from 'config';
 
@@ -16,6 +16,16 @@ export class UserService {
     };
 
     return await User.findOne(options);
+  }
+
+  async findOneOrFail(id: string, params?: FindOneDTO) {
+    const user = await this.findOne(id, params);
+
+    if (!user) {
+      throw new NotFoundError('user');
+    }
+
+    return user;
   }
 
   async create(options: CreateUserDTO): Promise<User | never> {
