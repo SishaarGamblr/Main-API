@@ -4,7 +4,7 @@ import JWT from '@fastify/jwt'
 
 import { FastifyError, FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from 'fastify';
 
-fp((fastify: FastifyInstance, _options: FastifyPluginOptions, next: (error?: FastifyError) => void): void => {
+export default fp((fastify: FastifyInstance, _options: FastifyPluginOptions, done: (error?: FastifyError) => void): void => {
   fastify.register(JWT, {
     secret: Config.get<string>('security.JWT_secret')
   });
@@ -17,6 +17,6 @@ fp((fastify: FastifyInstance, _options: FastifyPluginOptions, next: (error?: Fas
     }
   });
 
-  next();
+  done();
 })
 
