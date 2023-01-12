@@ -3,6 +3,7 @@
     "url": "DATABASE_URL"
   },
   "security": {
-    "JWT_secret": "JWT_SECRET"
+    "JWT_secret": "JWT_SECRET",
+    "Cookie_secret": "COOKIE_SECRET"
   }
 }
