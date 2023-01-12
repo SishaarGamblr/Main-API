@@ -20,10 +20,14 @@ export class UserService {
       where.phone = params.phone;
     }
 
+    if (params?.refreshToken) {
+      where.refreshToken = params.refreshToken
+    }
+
     return await User.findOne({ where });
   }
 
-  async findOneOrFail(id: string, params?: FindOneDTO) {
+  async findOneOrFail(id: string | null, params?: FindOneDTO) {
     const user = await this.findOne(id, params);
 
     if (!user) {
@@ -90,6 +94,7 @@ export class UserService {
 interface FindOneDTO {
   deleted?: boolean;
   phone?: string;
+  refreshToken?: string;
 }
 
 interface CreateUserDTO {

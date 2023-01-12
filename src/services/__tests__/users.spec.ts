@@ -106,6 +106,32 @@ describe('Users Service', () => {
         expect(response).toMatchObject(user);
       });
     });
+
+    describe('finding a user by refreshToken', () => {
+      let user: User;
+      const refreshToken = 'refreshToken';
+
+      beforeAll(async () => {
+        user = await User.create({
+          email: 'dummy',
+          phone: 'dummy',
+          name: 'dummy',
+          password: 'dummy',
+          refreshToken
+        }).save();
+      });
+
+      afterAll(async () => {
+        await user?.remove();
+      });
+
+      it('returns the user', async () => {
+        const response = await usersService.findOne(null, { refreshToken });
+
+        expect(response).toBeDefined();
+        expect(response).toMatchObject(user);
+      });
+    });
   });
 
   describe('create', () => {
