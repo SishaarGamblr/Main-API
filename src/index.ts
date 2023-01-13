@@ -6,7 +6,9 @@ import connection from './utils/database/connection';
 const FASTIFY_PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 async function shutdown(code = 0) {
-  await connection.destroy();
+  if (connection.isInitialized) {
+    await connection.destroy();
+  }
   app.log.info('Shutting down');
   await app.close();
   app.log.info('Server has shut down');
@@ -14,7 +16,9 @@ async function shutdown(code = 0) {
 }
 
 async function init() {
-  await connection.initialize();
+  if (!connection.isInitialized) {
+    await connection.initialize();
+  }
 
   try {
     app.listen({

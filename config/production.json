@@ -2,5 +2,9 @@
   "database": {
     "url": "ENVIRONMENT_VARIABLE",
     "ssl": true
+  },
+  "security": {
+    "JWT_secret": "ENVIRONMENT_VARIABLE",
+    "Cookie_secret": "ENVIRONMENT_VARIABLE"
   }
 }

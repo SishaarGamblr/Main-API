@@ -4,6 +4,8 @@
     "ssl": false
   },
   "security": {
-    "salt_rounds": 10
+    "salt_rounds": 10,
+    "JWT_secret": "sishaartheraodyrao",
+    "Cookie_secret": "chocolatechipisthegoat"
   }
 }

@@ -4,7 +4,9 @@ services:
   app:
     ports:
       - '3000:3000'
+      - '9229:9229' # Node Debugger
     volumes:
+      - /app/node_modules
       - .:/app
 
   postgres:
