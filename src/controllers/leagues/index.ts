@@ -35,12 +35,12 @@ export default async (fastify: FastifyInstance) => {
       reply: FastifyReply
     ) {
       const leaguesService = Container.get(LeaguesService);
-      const user = await leaguesService.create({
+      const league = await leaguesService.create({
         name: request.body.name,
         ownerId: request.body.ownerId,
       });
 
-      reply.send(user);
+      reply.send(league);
     }
   );
 
