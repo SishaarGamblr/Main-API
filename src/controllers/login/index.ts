@@ -3,8 +3,7 @@ import * as Schemas from './schemas';
 import Container from "typedi";
 import { UserService } from "../../services/users";
 import sleep from "../../utils/sleep";
-import { NotFoundError, UnauthorizedError } from "../../lib/errors/errors";
-import { randomBytes } from "crypto";
+import { NotFoundError, UnauthorizedError, UnexpectedErorr } from "../../lib/errors/errors";
 
 export default async (fastify: FastifyInstance) => {
   fastify.post(
@@ -31,10 +30,10 @@ export default async (fastify: FastifyInstance) => {
         return reply.send(new UnauthorizedError());
       }
 
-      const token = await reply.jwtSign({ 'user': user.id });
+      const token = await reply.jwtSign({ user: user.id }, { expiresIn: '1d' });
       const refreshToken = await reply.jwtSign({
-        token: randomBytes(64).toString('hex')
-      }, { expiresIn: '30s' });
+        user: user.id,
+      }, { expiresIn: '90d' });
       
       reply
         .setCookie('refreshToken', refreshToken)
@@ -42,51 +41,71 @@ export default async (fastify: FastifyInstance) => {
     }
   );
 
-  // fastify.post(
-  //   '/refresh',
-  //   {
-  //     schema: Schemas.Refresh
-  //   },
-  //   async function refresh(
-  //     request: FastifyRequest<{ Body: Schemas.IRefresh }>,
-  //     reply: FastifyReply
-  //   ) {
-  //     const usersService = Container.get(UserService);
-  //     const user = await usersService.findOne(null, {
-  //       refreshToken: request.body.refreshToken
-  //     });
+  fastify.post(
+    '/verify',
+    {
+      schema: Schemas.Verify,
+      onRequest: [fastify.authenticate]
+    },
+    async function verify(
+      _request: FastifyRequest,
+      reply: FastifyReply
+    ) {
+      reply.send('ok');
+    }
+  )
 
-  //     if (!user) {
-  //       await sleep(2000);
-  //       return reply.send(new UnauthorizedError());
-  //     }
+  fastify.post(
+    '/refresh',
+    {
+      schema: Schemas.Refresh
+    },
+    async function refresh(
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) {
+      const decoded: { user: string } = await request.jwtVerify({ onlyCookie: true });
+      
+      const usersService = Container.get(UserService);
+      const user = await usersService.findOne(decoded.user);
 
-  //     const token = fastify.jwt.sign({ 'user': user.id});
-  //     reply.send({ token });
-  //   }
-  // );
+      if (!user) {
+        await sleep(2000);
+        return reply.send(new UnauthorizedError());
+      }
 
-  // fastify.post(
-  //   '/logout',
-  //   {
-  //     schema: Schemas.Logout
-  //   },
-  //   async function logout(
-  //     request: FastifyRequest<{ Body: Schemas.ILogout }>,
-  //     reply: FastifyReply
-  //   ) {
-  //     const usersService = Container.get(UserService);
-  //     const user = await usersService.findOne(null, {
-  //       refreshToken: request.body.refreshToken
-  //     });
+      const token = await reply.jwtSign({ user: user.id }, { expiresIn: '1d' });
+      
+      reply.send({ token });
+    }
+  );
 
-  //     if (!user) {
-  //       await sleep(2000);
-  //       return reply.send(new UnauthorizedError());
-  //     }
+  fastify.post(
+    '/logout',
+    {
+      schema: Schemas.Logout,
+      onRequest: [fastify.authenticate]
+    },
+    async function logout(
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) {
+      const usersService = Container.get(UserService);
+      const user = await usersService.findOne((request.user as Schemas.IAuth).user);
 
-  //     user.refreshToken = null;
-  //     await user.save();
-  //   }
-  // )
+      if (!user) {
+        await sleep(2000);
+        return reply.send(new UnauthorizedError());
+      }
+
+      try {
+        return reply
+          .clearCookie('refreshToken')
+          .status(200)
+          .send();
+      } catch (err) {
+        reply.send(new UnexpectedErorr())
+      }
+    }
+  )
 }

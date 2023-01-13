@@ -28,13 +28,6 @@ export interface ILogin {
 }
 
 export const Refresh = {
-  body: {
-    type: 'object',
-    properties: {
-      refreshToken: { type: 'string' },
-    },
-    required: ['refreshToken']
-  },
   response: {
     200: {
       type: 'object',
@@ -48,18 +41,7 @@ export const Refresh = {
   }
 }
 
-export interface IRefresh {
-  refreshToken: string;
-}
-
 export const Logout = {
-  body: {
-    type: 'object',
-    properties: {
-      refreshToken: { type: 'string' },
-    },
-    required: ['refreshToken']
-  },
   response: {
     200: {
       type: 'string'
@@ -69,6 +51,16 @@ export const Logout = {
   }
 };
 
-export interface ILogout {
-  refreshToken: string;
+export const Verify = {
+  response: {
+    200: {
+      type: 'string'
+    },
+    '4xx': { ...ErrorSchemas.Error },
+    '5xx': { ...ErrorSchemas.Error }
+  }
+};
+
+export interface IAuth {
+  user: string;
 }
