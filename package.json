@@ -5,6 +5,7 @@
   "scripts": {
     "watch": "tsc --watch --preserveWatchOutput --pretty",
     "dev": "nodemon --transpile-only src/index.ts",
+    "debug": "TS_NODE_TRANSPILE_ONLY=true nodemon --exec 'node --inspect=0.0.0.0:9229 -r ts-node/register src/index.ts' -e ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "clean": "rimraf dist",
     "build": "npm run clean; tsc -p tsconfig.build.json;",
