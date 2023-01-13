@@ -1,8 +1,6 @@
-import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import Container from 'typedi';
-import { UserService } from '../../services/users';
-import { NotFoundError } from '../../lib/errors/errors';
+import { FastifyInstance } from 'fastify';
 import * as Schemas from './schemas';
+import * as Controllers from './controllers';
 
 export default async (fastify: FastifyInstance) => {
   fastify.get(
@@ -10,19 +8,7 @@ export default async (fastify: FastifyInstance) => {
     {
       schema: Schemas.FindById,
     },
-    async function findById(
-      request: FastifyRequest<{ Params: Schemas.IFindByIdParams }>,
-      reply: FastifyReply
-    ) {
-      const usersService = Container.get(UserService);
-      const user = await usersService.findOne(request.params.id);
-
-      if (!user) {
-        reply.send(new NotFoundError(request.params.id));
-      }
-
-      reply.send(user);
-    }
+    Controllers.findById
   );
 
   fastify.post(
@@ -30,20 +16,7 @@ export default async (fastify: FastifyInstance) => {
     {
       schema: Schemas.Create,
     },
-    async function create(
-      request: FastifyRequest<{ Body: Schemas.ICreateBody }>,
-      reply: FastifyReply
-    ) {
-      const usersService = Container.get(UserService);
-      const user = await usersService.create({
-        email: request.body.email,
-        phone: request.body.phone,
-        name: request.body.name,
-        password: request.body.password
-      });
-
-      reply.send(user);
-    }
+    Controllers.create
   );
 
   fastify.delete(
@@ -51,14 +24,6 @@ export default async (fastify: FastifyInstance) => {
     {
       schema: Schemas.Delete,
     },
-    async function create(
-      request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
-      reply: FastifyReply
-    ) {
-      const usersService = Container.get(UserService);
-      await usersService.delete(request.params.id);
-
-      reply.code(200).send('ok');
-    }
+    Controllers.deleteUser
   );
 };
