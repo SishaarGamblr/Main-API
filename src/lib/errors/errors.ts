@@ -12,3 +12,4 @@ export const InsufficientBalanceError = createError(
   403
 );
 export const UnauthorizedError = createError('UNAUTHORIZED', 'Unauthorized', 401);
+export const UnexpectedErorr = createError('UNEXPECTED_FATAL', 'Unexpected Fatal Error', 500);
