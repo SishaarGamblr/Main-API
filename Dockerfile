@@ -8,6 +8,7 @@ ENV NODE_ENV development
 COPY . .
 RUN npm install
 RUN npm run build
+EXPOSE 9229
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
