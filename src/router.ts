@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 
-import users from './routes/users';
-import leagues from './routes/leagues';
-import transactions from './routes/transactions';
-import login from './routes/login';
+import users from './controllers/users';
+import leagues from './controllers/leagues';
+import transactions from './controllers/transactions';
+import login from './controllers/login';
 import cookie from './plugins/cookie';
 import jwt from './plugins/jwt';
 
