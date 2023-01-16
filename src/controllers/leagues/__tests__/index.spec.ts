@@ -233,6 +233,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/leagues/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
@@ -253,6 +256,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/leagues/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
@@ -273,6 +279,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/leagues/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(500);

@@ -53,13 +53,17 @@ export default async (fastify: FastifyInstance) => {
     '/:id',
     {
       schema: Schemas.Delete,
+      preHandler: [fastify.authenticate]
     },
-    async function create(
-      request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
+    async function deleteLeague(
+      request: FastifyRequest,
       reply: FastifyReply
     ) {
+      const params = request.params as Schemas.IDeleteParams;
+      const { userId } = request.user as IAuth;
+
       const leaguesService = Container.get(LeaguesService);
-      await leaguesService.delete(request.params.id);
+      await leaguesService.delete(params.id, { ownerId: userId });
 
       reply.code(200).send('ok');
     }
