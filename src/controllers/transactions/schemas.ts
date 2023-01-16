@@ -39,7 +39,7 @@ export const Create = {
     type: 'object',
     properties: {
       toId: { type: 'string' },
-      amount: { type: 'number' },
+      amount: { type: 'number', minimum: 0 },
     },
     required: ['toId', 'amount'],
   },

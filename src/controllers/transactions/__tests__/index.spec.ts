@@ -29,7 +29,7 @@ describe('Transactions Controller', () => {
       });
 
       let mockTransactionService;
-      let mockWalletsService: { findOneOrFail: any; };
+      let mockWalletsService: { findOneOrFail: any };
 
       beforeAll(() => {
         mockTransactionService = {
@@ -39,9 +39,9 @@ describe('Transactions Controller', () => {
         };
 
         mockWalletsService = {
-          findOneOrFail: jest.fn().mockResolvedValue(wallet)
+          findOneOrFail: jest.fn().mockResolvedValue(wallet),
         };
-        
+
         Container.set(WalletsService, mockWalletsService);
         Container.set(TransactionsService, mockTransactionService);
       });
@@ -81,7 +81,35 @@ describe('Transactions Controller', () => {
       });
 
       it('uses a wallet that belongs to the user making the request', async () => {
-        expect(mockWalletsService.findOneOrFail).toHaveBeenCalledWith(undefined, { ownerId: 'dummyUserId' });
+        expect(mockWalletsService.findOneOrFail).toHaveBeenCalledWith(
+          undefined,
+          { ownerId: 'dummyUserId' }
+        );
+      });
+    });
+
+    describe('creating a transaction with a negative amount', () => {
+      it('throws an error', async () => {
+        const response = await server.inject({
+          method: 'POST',
+          url: '/transactions',
+          payload: {
+            amount: -100,
+            toId: 'dummy',
+          },
+          headers: {
+            authorization: 'Bearer test',
+          },
+        });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.json()).toMatchInlineSnapshot(`
+          {
+            "error": "Bad Request",
+            "message": "body/amount must be >= 0",
+            "statusCode": 400,
+          }
+        `);
       });
     });
 
@@ -100,9 +128,9 @@ describe('Transactions Controller', () => {
           },
         };
         const mockWalletsService = {
-          findOneOrFail: () => jest.fn().mockResolvedValue(wallet)
+          findOneOrFail: () => jest.fn().mockResolvedValue(wallet),
         };
-        
+
         Container.set(WalletsService, mockWalletsService);
         Container.set(TransactionsService, mockTransactionService);
       });
