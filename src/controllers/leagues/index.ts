@@ -3,6 +3,7 @@ import * as Schemas from './schemas';
 import Container from 'typedi';
 import { LeaguesService } from '../../services/leagues';
 import { NotFoundError } from '../../lib/errors/errors';
+import { IAuth } from '../login/schemas';
 
 export default async (fastify: FastifyInstance) => {
   fastify.get(
@@ -29,15 +30,19 @@ export default async (fastify: FastifyInstance) => {
     '/',
     {
       schema: Schemas.Create,
+      preHandler: [fastify.authenticate]
     },
     async function create(
-      request: FastifyRequest<{ Body: Schemas.ICreateBody }>,
+      request: FastifyRequest,
       reply: FastifyReply
     ) {
+      const body = request.body as Schemas.ICreateBody;
+      const auth = request.user as IAuth
+
       const leaguesService = Container.get(LeaguesService);
       const league = await leaguesService.create({
-        name: request.body.name,
-        ownerId: request.body.ownerId,
+        name: body.name,
+        ownerId: auth.userId,
       });
 
       reply.send(league);

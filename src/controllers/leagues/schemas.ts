@@ -43,17 +43,15 @@ export const Create = {
   body: {
     type: 'object',
     properties: {
-      ownerId: { type: 'string' },
       name: { type: 'string' },
     },
-    required: ['ownerId', 'name'],
+    required: ['name'],
   },
   response: LeagueResponse,
 };
 
 export interface ICreateBody {
   name: string;
-  ownerId: string;
 }
 
 /** Delete League */
