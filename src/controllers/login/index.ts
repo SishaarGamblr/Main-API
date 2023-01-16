@@ -91,7 +91,7 @@ export default async (fastify: FastifyInstance) => {
       reply: FastifyReply
     ) {
       const usersService = Container.get(UserService);
-      const user = await usersService.findOne((request.user as Schemas.IAuth).user);
+      const user = await usersService.findOne((request.user as Schemas.IAuth).userId);
 
       if (!user) {
         await sleep(2000);

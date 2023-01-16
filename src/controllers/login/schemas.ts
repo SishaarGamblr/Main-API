@@ -62,5 +62,5 @@ export const Verify = {
 };
 
 export interface IAuth {
-  user: string;
+  userId: string;
 }
