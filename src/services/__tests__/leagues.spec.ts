@@ -3,7 +3,7 @@ import { User } from '../../entities/User';
 import { LeaguesService } from '../leagues';
 import { League } from '../../entities/League';
 import { UsersToLeagues } from '../../entities/UsersInLeagues';
-import { NotFoundError } from '../../lib/errors/errors';
+import { ForbiddenError, NotFoundError } from '../../lib/errors/errors';
 
 describe('Leagues Service', () => {
   const leaguesService = Container.get(LeaguesService);
@@ -206,6 +206,32 @@ describe('Leagues Service', () => {
         expect(() => leaguesService.delete('dummy')).not.toThrowError();
       });
     });
+
+    describe('deleting a league which does not belong to the request owner', () => {
+      let league: League;
+      beforeAll(async () => {
+        league = await League.create({
+          owner: owner,
+          name: 'dummy',
+        }).save();
+      });
+
+      afterAll(async () => {
+        await league.remove();
+      });
+
+      it('throws an error', async () => {
+        let caughtErr;
+        try {
+          await leaguesService.delete(league.id, { ownerId: 'dummy'});
+        } catch (err) {
+          caughtErr = err;
+        }
+
+        expect(caughtErr).toBeDefined();
+        expect(caughtErr).toBeInstanceOf(ForbiddenError);
+      })
+    })
   });
 
   describe('inviteUser', () => {

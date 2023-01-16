@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import { League } from '../entities/League';
 import { FindOneOptions } from 'typeorm';
 import { UserService } from './users';
-import { NotFoundError } from '../lib/errors/errors';
+import { ForbiddenError, NotFoundError } from '../lib/errors/errors';
 import { UsersToLeagues } from '../entities/UsersInLeagues';
 
 @Service()
@@ -34,7 +34,7 @@ export class LeaguesService {
   async create(options: CreateLeagueDTO): Promise<League | never> {
     const league = await League.create({
       name: options.name,
-      owner: { id: options.ownerId },
+      ownerId: options.ownerId,
     }).save();
 
     await UsersToLeagues.create({
@@ -47,9 +47,14 @@ export class LeaguesService {
     return await this.findOneOrFail(league.id);
   }
 
-  async delete(id: string) {
+  async delete(id: string, params?: DeleteDTO) {
     const league = await this.findOne(id);
+
     if (league) {
+      if (params?.ownerId && league.ownerId !== params.ownerId) {
+        throw new ForbiddenError()
+      }
+
       league.deleted = true;
       await league.save();
     }
@@ -74,5 +79,9 @@ interface FindOneDTO {
 
 interface CreateLeagueDTO {
   name: string;
+  ownerId: string;
+}
+
+interface DeleteDTO {
   ownerId: string;
 }
