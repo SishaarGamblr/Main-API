@@ -1,8 +1,9 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import Container from 'typedi';
 import { UserService } from '../../services/users';
-import { NotFoundError } from '../../lib/errors/errors';
+import { ForbiddenError, NotFoundError } from '../../lib/errors/errors';
 import * as Schemas from './schemas';
+import { IAuth } from '../login/schemas';
 
 export default async (fastify: FastifyInstance) => {
   fastify.get(
@@ -50,13 +51,21 @@ export default async (fastify: FastifyInstance) => {
     '/:id',
     {
       schema: Schemas.Delete,
+      preHandler: [fastify.authenticate]
     },
-    async function create(
-      request: FastifyRequest<{ Params: Schemas.IDeleteParams }>,
+    async function deleteUser(
+      request: FastifyRequest,
       reply: FastifyReply
     ) {
+      const params = request.params as Schemas.IDeleteParams;
+      const { userId } = request.user as IAuth;
+
+      if (params.id !== userId) {
+        reply.send(new ForbiddenError())
+      }
+
       const usersService = Container.get(UserService);
-      await usersService.delete(request.params.id);
+      await usersService.delete(params.id);
 
       reply.code(200).send('ok');
     }
