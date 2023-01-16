@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, RelationId, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, RelationId, Unique } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { League } from './League';
@@ -30,5 +30,6 @@ export class UsersToLeagues extends BaseEntity {
   user!: User;
 
   @ManyToOne(() => League, (league) => league.leaguesToUsers, { onDelete: 'CASCADE'})
+  @JoinColumn()
   league!: League;
 }
