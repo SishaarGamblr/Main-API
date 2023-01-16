@@ -4,6 +4,7 @@ import { Transaction } from '../../../entities/Transaction';
 import { TransactionsService } from '../../../services/transactions';
 import server from '../../../app';
 import { Response } from 'light-my-request';
+import { WalletsService } from '../../../services/wallets';
 
 describe('Transactions Controller', () => {
   afterEach(() => {
@@ -17,7 +18,9 @@ describe('Transactions Controller', () => {
       let response: Response;
 
       beforeAll(async () => {
-        wallet = await Wallet.create().save();
+        wallet = await Wallet.create({
+          owner: { id: 'dummyUserId' },
+        }).save();
         transaction = await Transaction.create({
           amount: 100,
           from: { id: wallet.id },
@@ -25,12 +28,21 @@ describe('Transactions Controller', () => {
         }).save();
       });
 
+      let mockTransactionService;
+      let mockWalletsService: { findOneOrFail: any; };
+
       beforeAll(() => {
-        const mockTransactionService = {
+        mockTransactionService = {
           TRANSACTION: {
-            create: () => Promise.resolve(transaction),
+            create: jest.fn().mockResolvedValue(transaction),
           },
         };
+
+        mockWalletsService = {
+          findOneOrFail: jest.fn().mockResolvedValue(wallet)
+        };
+        
+        Container.set(WalletsService, mockWalletsService);
         Container.set(TransactionsService, mockTransactionService);
       });
 
@@ -53,8 +65,10 @@ describe('Transactions Controller', () => {
             fromId: wallet.id,
             toId: wallet.id,
           },
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
-
         expect(response.statusCode).toBe(200);
       });
 
@@ -64,6 +78,10 @@ describe('Transactions Controller', () => {
         expect(responseJson.amount).toBe(transaction.amount);
         expect(responseJson.fromId).toBe(transaction.fromId);
         expect(responseJson.toId).toBe(transaction.toId);
+      });
+
+      it('uses a wallet that belongs to the user making the request', async () => {
+        expect(mockWalletsService.findOneOrFail).toHaveBeenCalledWith(undefined, { ownerId: 'dummyUserId' });
       });
     });
 
@@ -81,6 +99,11 @@ describe('Transactions Controller', () => {
             create: () => Promise.reject(new Error('dummy')),
           },
         };
+        const mockWalletsService = {
+          findOneOrFail: () => jest.fn().mockResolvedValue(wallet)
+        };
+        
+        Container.set(WalletsService, mockWalletsService);
         Container.set(TransactionsService, mockTransactionService);
       });
 
@@ -102,6 +125,9 @@ describe('Transactions Controller', () => {
             amount: 100,
             fromId: wallet.id,
             toId: wallet.id,
+          },
+          headers: {
+            authorization: 'Bearer test',
           },
         });
 
