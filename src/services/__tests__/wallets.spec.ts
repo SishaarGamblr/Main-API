@@ -57,6 +57,13 @@ describe('Wallets Service', () => {
         expect(caughtError).toBeInstanceOf(NotFoundError);
       });
 
+      it('finds a wallet simply from the owner ID', async () => {
+        const response = await walletsService.findOneOrFail(undefined, { ownerId: owner.id });
+
+        expect(response).toBeDefined();
+        expect(response?.id).toBe(wallet.id);
+      });
+
       it('returns a deleted wallet if specified', async () => {
         await walletsService.delete(wallet.id);
         const response = await walletsService.findOneOrFail(wallet.id, { deleted: true });
@@ -65,7 +72,7 @@ describe('Wallets Service', () => {
         expect(response?.id).toBe(wallet.id);
       });
 
-    })
+    });
 
   });
 

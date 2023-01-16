@@ -5,7 +5,7 @@ import { NotFoundError } from '../lib/errors/errors';
 
 @Service()
 export class WalletsService {
-  async findOneOrFail(id: string, params?: FindOneDTO) {
+  async findOneOrFail(id: string | undefined, params?: FindOneDTO) {
     const options: FindOneOptions<Wallet> = {
       where: {
         id,
