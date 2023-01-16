@@ -30,7 +30,7 @@ export default async (fastify: FastifyInstance) => {
         return reply.send(new UnauthorizedError());
       }
 
-      const token = await reply.jwtSign({ user: user.id }, { expiresIn: '1d' });
+      const token = await reply.jwtSign({ userId: user.id }, { expiresIn: '1d' });
       const refreshToken = await reply.jwtSign({
         user: user.id,
       }, { expiresIn: '90d' });
@@ -64,17 +64,17 @@ export default async (fastify: FastifyInstance) => {
       request: FastifyRequest,
       reply: FastifyReply
     ) {
-      const decoded: { user: string } = await request.jwtVerify({ onlyCookie: true });
+      const decoded: { userId: string } = await request.jwtVerify({ onlyCookie: true });
       
       const usersService = Container.get(UserService);
-      const user = await usersService.findOne(decoded.user);
+      const user = await usersService.findOne(decoded.userId);
 
       if (!user) {
         await sleep(2000);
         return reply.send(new UnauthorizedError());
       }
 
-      const token = await reply.jwtSign({ user: user.id }, { expiresIn: '1d' });
+      const token = await reply.jwtSign({ userId: user.id }, { expiresIn: '1d' });
       
       reply.send({ token });
     }
