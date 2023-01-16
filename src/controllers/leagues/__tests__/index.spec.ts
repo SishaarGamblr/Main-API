@@ -298,11 +298,11 @@ describe('Leagues Controller', () => {
 
   describe('PUT /leagues/:id/invite/:userId', () => {
     describe('inviting a user', () => {
-      beforeAll(async () => {
-        const mockLeagueService = {
-          inviteUser: () => Promise.resolve(),
-        };
+      const mockLeagueService = {
+        inviteUser: jest.fn(),
+      };
 
+      beforeAll(async () => {
         Container.set(LeaguesService, mockLeagueService);
       });
 
@@ -310,11 +310,18 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'PUT',
           url: '/leagues/dummyLeagueId/invite/dummyUserId',
+          headers: {
+            authorization: 'Bearer test'
+          }
         });
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toBe('ok');
       });
+
+      it('provides an invitedById inferred from the request', async () => {
+        expect(mockLeagueService.inviteUser).toHaveBeenCalledWith("dummyLeagueId", "dummyUserId", "dummyUserId")
+      })
     });
 
     describe('an unexpected error is encountered', () => {
@@ -330,6 +337,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'PUT',
           url: '/leagues/dummyLeagueId/invite/dummyUserId',
+          headers: {
+            authorization: 'Bearer test'
+          }
         });
 
         expect(response.statusCode).toBe(500);

@@ -72,15 +72,19 @@ export default async (fastify: FastifyInstance) => {
   fastify.put(
     '/:id/invite/:userId',
     {
-      schema: Schemas.InviteUser
+      schema: Schemas.InviteUser,
+      preHandler: [fastify.authenticate]
     },
     async function inviteUser(
-      request: FastifyRequest<{ Params: Schemas.IInviteUserParams}>,
+      request: FastifyRequest,
       reply: FastifyReply
     ) {
+      const params = request.params as Schemas.IInviteUserParams;
+
+      const { userId } = request.user as IAuth;
+
       const leaguesService = Container.get(LeaguesService);
-      // TODO: Add invitedById based on JWT
-      await leaguesService.inviteUser(request.params.id, request.params.userId);
+      await leaguesService.inviteUser(params.id, params.userId, userId);
 
       reply.code(200).send('ok');
     }
