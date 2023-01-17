@@ -12,6 +12,13 @@ EXPOSE 9229
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
+FROM build AS ci
+WORKDIR /app
+ENV NODE_ENV test
+COPY . .
+RUN npm install
+EXPOSE 3000
+
 FROM build AS production
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV

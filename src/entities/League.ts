@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { UsersToLeagues } from './UsersInLeagues';
@@ -11,7 +11,11 @@ export class League extends BaseEntity {
   @Column({ nullable: false })
   name!: string;
 
+  @Column({ name: 'ownerId'})
+  ownerId: string
+
   @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'ownerId'})
   owner: User;
 
   @OneToMany(() => UsersToLeagues, (userToLeague) => userToLeague.leagueId)

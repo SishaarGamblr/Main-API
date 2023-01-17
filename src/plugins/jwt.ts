@@ -24,6 +24,7 @@ export default fp((fastify: FastifyInstance, _options: FastifyPluginOptions, don
 
   fastify.decorate('authenticate', async function (request: FastifyRequest, reply: FastifyReply) {
     if (['development', 'test'].includes(String(process.env.NODE_ENV)) && request.headers.authorization === 'Bearer test') {
+      request.user = { userId: 'dummyUserId' }
       return;
     }
 

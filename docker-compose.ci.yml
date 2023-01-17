@@ -3,3 +3,5 @@ version: '3.8'
 services:
   app:
     command: bash -c "npm run db:migrate && npm test"
+    build:
+      target: ci

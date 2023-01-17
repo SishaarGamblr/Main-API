@@ -183,7 +183,10 @@ describe('Users Controller', () => {
       it('returns without throwing an error', async () => {
         const response = await server.inject({
           method: 'DELETE',
-          url: '/users/dummyId',
+          url: '/users/dummyUserId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
@@ -203,11 +206,44 @@ describe('Users Controller', () => {
       it('deletes the user', async () => {
         const response = await server.inject({
           method: 'DELETE',
-          url: '/users/dummyId',
+          url: '/users/dummyUserId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toBe('ok');
+      });
+    });
+
+    describe('deleting a user which is different from the inferred user', () => {
+      beforeAll(async () => {
+        const mockUserService = {
+          delete: () => Promise.resolve(),
+        };
+
+        Container.set(UserService, mockUserService);
+      });
+
+      it('throws an error', async () => {
+        const response = await server.inject({
+          method: 'DELETE',
+          url: '/users/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
+        });
+
+        expect(response.statusCode).toBe(403);
+        expect(response.json()).toMatchInlineSnapshot(`
+          {
+            "code": "FORBIDDEN",
+            "error": "Forbidden",
+            "message": "Forbidden",
+            "statusCode": 403,
+          }
+        `);
       });
     });
 
@@ -223,7 +259,10 @@ describe('Users Controller', () => {
       it('throws an error', async () => {
         const response = await server.inject({
           method: 'DELETE',
-          url: '/users/dummyId',
+          url: '/users/dummyUserId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(500);

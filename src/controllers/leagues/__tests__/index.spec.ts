@@ -76,6 +76,9 @@ describe('Leagues Controller', () => {
             ownerId: 'dummy',
             name: 'dummy',
           },
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
@@ -86,6 +89,51 @@ describe('Leagues Controller', () => {
             "ownerId": "dummy",
           }
         `);
+      });
+    });
+
+    describe('successfully creating a league and inferring the owner from the auth token', () => {
+      const mockLeague = {
+        id: 'dummy',
+        ownerId: 'dummy',
+        name: 'dummy',
+      };
+
+      let mockLeagueService = {
+        create: jest.fn().mockResolvedValue(mockLeague),
+      };
+
+      beforeAll(async () => {
+        Container.set(LeaguesService, mockLeagueService);
+      });
+
+      it('creates the league', async () => {
+        const response = await server.inject({
+          method: 'POST',
+          url: `/leagues`,
+          payload: {
+            name: 'dummy',
+          },
+          headers: {
+            authorization: 'Bearer test',
+          },
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.json()).toMatchInlineSnapshot(`
+          {
+            "id": "dummy",
+            "name": "dummy",
+            "ownerId": "dummy",
+          }
+        `);
+      });
+
+      it('uses the request decoded auth object to determine the owner ID', async () => {
+        expect(mockLeagueService.create).toHaveBeenCalledWith({
+          ownerId: 'dummyUserId',
+          name: 'dummy',
+        });
       });
     });
 
@@ -105,6 +153,9 @@ describe('Leagues Controller', () => {
           payload: {
             ownerId: 'dummy',
             name: 'dummy',
+          },
+          headers: {
+            authorization: 'Bearer test',
           },
         });
 
@@ -126,13 +177,16 @@ describe('Leagues Controller', () => {
           method: 'POST',
           url: `/leagues`,
           payload: {},
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(400);
         expect(response.json()).toMatchInlineSnapshot(`
           {
             "error": "Bad Request",
-            "message": "body must have required property 'ownerId'",
+            "message": "body must have required property 'name'",
             "statusCode": 400,
           }
         `);
@@ -156,6 +210,9 @@ describe('Leagues Controller', () => {
             ownerId: 'dummy',
             name: 'dummy',
           },
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(500);
@@ -176,6 +233,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/leagues/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
@@ -196,6 +256,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/leagues/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(200);
@@ -216,6 +279,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/leagues/dummyId',
+          headers: {
+            authorization: 'Bearer test',
+          },
         });
 
         expect(response.statusCode).toBe(500);
@@ -232,11 +298,11 @@ describe('Leagues Controller', () => {
 
   describe('PUT /leagues/:id/invite/:userId', () => {
     describe('inviting a user', () => {
-      beforeAll(async () => {
-        const mockLeagueService = {
-          inviteUser: () => Promise.resolve(),
-        };
+      const mockLeagueService = {
+        inviteUser: jest.fn(),
+      };
 
+      beforeAll(async () => {
         Container.set(LeaguesService, mockLeagueService);
       });
 
@@ -244,11 +310,18 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'PUT',
           url: '/leagues/dummyLeagueId/invite/dummyUserId',
+          headers: {
+            authorization: 'Bearer test'
+          }
         });
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toBe('ok');
       });
+
+      it('provides an invitedById inferred from the request', async () => {
+        expect(mockLeagueService.inviteUser).toHaveBeenCalledWith("dummyLeagueId", "dummyUserId", "dummyUserId")
+      })
     });
 
     describe('an unexpected error is encountered', () => {
@@ -264,6 +337,9 @@ describe('Leagues Controller', () => {
         const response = await server.inject({
           method: 'PUT',
           url: '/leagues/dummyLeagueId/invite/dummyUserId',
+          headers: {
+            authorization: 'Bearer test'
+          }
         });
 
         expect(response.statusCode).toBe(500);
@@ -275,6 +351,6 @@ describe('Leagues Controller', () => {
           }
         `);
       });
-    })
-  })
+    });
+  });
 });

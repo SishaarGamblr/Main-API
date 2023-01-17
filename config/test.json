@@ -1,6 +1,6 @@
 {
   "database": {
-    "url": "postgres://superuser:password@localhost:5432/database",
+    "url": "postgres://superuser:password@postgres:5432/database",
     "ssl": false
   }
 }

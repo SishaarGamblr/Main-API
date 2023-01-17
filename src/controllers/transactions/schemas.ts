@@ -38,17 +38,15 @@ export const Create = {
   body: {
     type: 'object',
     properties: {
-      fromId: { type: 'string' },
       toId: { type: 'string' },
-      amount: { type: 'number' },
+      amount: { type: 'number', minimum: 0 },
     },
-    required: ['fromId', 'toId', 'amount'],
+    required: ['toId', 'amount'],
   },
   response: TransactionResponse,
 };
 
 export interface ICreateBody {
-  fromId: string;
   toId: string;
   amount: number;
 }
